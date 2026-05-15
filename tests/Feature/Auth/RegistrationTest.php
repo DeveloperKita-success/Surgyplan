@@ -12,8 +12,19 @@ test('new users can register', function () {
         'email' => 'test@example.com',
         'password' => 'password',
         'password_confirmation' => 'password',
+        'role' => 'perawat',
+        'nurse_type' => 'ok',
+
+        // Simulate browser behavior: hidden inputs submit empty strings,
+        // then Laravel converts them to null via ConvertEmptyStringsToNull.
+        'specialist' => '',
+        'degree' => '',
+        'sip_number' => '',
+        'address' => '',
+        'education_history' => '',
+        'unit_asal' => '',
     ]);
 
-    $this->assertAuthenticated();
-    $response->assertRedirect(route('dashboard', absolute: false));
+    $this->assertGuest();
+    $response->assertRedirect(route('login', absolute: false));
 });

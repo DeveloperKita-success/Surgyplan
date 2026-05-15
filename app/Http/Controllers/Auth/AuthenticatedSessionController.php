@@ -28,6 +28,8 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        $request->user()?->loadMissing(['doctor', 'nurse']);
+
         return redirect()->intended(route('dashboard', absolute: false));
     }
 

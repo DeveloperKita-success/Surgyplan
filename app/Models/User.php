@@ -6,12 +6,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
     use HasFactory, Notifiable;
     use HasRoles;
+
+    public const ROLE_DOKTER = 'dokter';
+    public const ROLE_PERAWAT = 'perawat';
+
     /**
      * The attributes that are mass assignable.
      *
@@ -21,6 +26,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
     ];
 
     /**
@@ -44,5 +50,35 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function doctor(): HasOne
+    {
+        return $this->hasOne(Doctor::class);
+    }
+
+    public function nurse(): HasOne
+    {
+        return $this->hasOne(Nurse::class);
+    }
+
+    public function isDoctor(): bool
+    {
+        return $this->role === self::ROLE_DOKTER;
+    }
+
+    public function isNurse(): bool
+    {
+        return $this->role === self::ROLE_PERAWAT;
+    }
+
+    public function isOkNurse(): bool
+    {
+        return $this->isNurse() && optional($this->nurse)->type === 'ok';
+    }
+
+    public function isRegularNurse(): bool
+    {
+        return $this->isNurse() && optional($this->nurse)->type === 'biasa';
     }
 }
