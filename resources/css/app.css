@@ -1,3 +1,46 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer utilities {
+	/* Subtle entrance reveal (fade + translate up) */
+	.sp-reveal {
+		opacity: 0;
+		transform: translate3d(0, 14px, 0);
+		will-change: opacity, transform;
+	}
+
+	.sp-reveal.is-visible {
+		opacity: 1;
+		transform: translate3d(0, 0, 0);
+		transition: opacity 700ms cubic-bezier(0.16, 1, 0.3, 1),
+			transform 700ms cubic-bezier(0.16, 1, 0.3, 1);
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.sp-reveal {
+			opacity: 1;
+			transform: none;
+		}
+
+		.sp-reveal.is-visible {
+			transition: none;
+		}
+	}
+
+	/* Micro-interaction: lift on hover (transform only, keep shadows via Tailwind classes) */
+	@media (prefers-reduced-motion: no-preference) {
+		.sp-hover-lift {
+			transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1);
+			will-change: transform;
+		}
+
+		.sp-hover-lift:hover {
+			transform: translate3d(0, -4px, 0);
+		}
+
+		.sp-hover-lift:active {
+			transform: translate3d(0, -2px, 0);
+		}
+	}
+}
