@@ -15,7 +15,7 @@ return new class extends Migration
             $table->date('birth_date')->nullable();
             $table->integer('age')->nullable();
             $table->string('gender');
-            $table->string('origin_room');
+            $table->enum('origin_room', ['IGD', 'Bangsal','Poli'])->nullable();
             $table->text('address')->nullable();
             $table->string('phone')->nullable();
             $table->foreignId('created_by')->constrained('users');

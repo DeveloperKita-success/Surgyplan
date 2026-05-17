@@ -8,12 +8,10 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
     use HasFactory, Notifiable;
-    use HasRoles;
 
     public const ROLE_DOKTER = 'dokter';
     public const ROLE_PERAWAT_UK = 'perawat_uk';
