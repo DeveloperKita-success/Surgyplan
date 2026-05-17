@@ -9,7 +9,6 @@ use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules;
@@ -36,18 +35,17 @@ class RegisteredUserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'role' => ['required', 'string', Rule::in([User::ROLE_DOKTER, User::ROLE_PERAWAT])],
+            'role' => ['required', 'string', Rule::in([User::ROLE_DOKTER, User::ROLE_PERAWAT_UK, User::ROLE_PERAWAT_BIASA])],
 
             // Dokter
-            'specialist' => ['required_if:role,'.User::ROLE_DOKTER, 'nullable', 'string', 'max:255'],
-            'degree' => ['required_if:role,'.User::ROLE_DOKTER, 'nullable', 'string', 'max:255'],
+            'specialist_id' => ['required_if:role,'.User::ROLE_DOKTER, 'nullable', 'integer', 'exists:specialists,id'],
+            'title' => ['required_if:role,'.User::ROLE_DOKTER, 'nullable', 'string', 'max:255'],
+            'str_number' => ['required_if:role,'.User::ROLE_DOKTER, 'nullable', 'string', 'max:100'],
             'sip_number' => ['required_if:role,'.User::ROLE_DOKTER, 'nullable', 'string', 'max:100', 'unique:doctors,sip_number'],
-            'address' => ['required_if:role,'.User::ROLE_DOKTER, 'nullable', 'string', 'max:2000'],
-            'education_history' => ['required_if:role,'.User::ROLE_DOKTER, 'nullable', 'string', 'max:5000'],
 
             // Perawat
-            'nurse_type' => ['required_if:role,'.User::ROLE_PERAWAT, 'nullable', 'string', Rule::in(['ok', 'biasa'])],
-            'unit_asal' => ['required_if:nurse_type,biasa', 'nullable', 'string', Rule::in(['IGD', 'Bangsal', 'Poli'])],
+            'nurse_type' => ['required_if:role,'.User::ROLE_PERAWAT_UK.','.User::ROLE_PERAWAT_BIASA, 'nullable', 'string', Rule::in([User::ROLE_PERAWAT_UK, User::ROLE_PERAWAT_BIASA])],
+            'origin_unit' => ['required_if:role,'.User::ROLE_PERAWAT_BIASA, 'nullable', 'string', Rule::in(['IGD', 'Bangsal', 'Poli'])],
         ]);
 
         $user = User::create([
@@ -60,19 +58,18 @@ class RegisteredUserController extends Controller
         if ($user->role === User::ROLE_DOKTER) {
             Doctor::create([
                 'user_id' => $user->id,
-                'specialist' => $request->specialist,
-                'degree' => $request->degree,
+                'specialist_id' => $request->specialist_id,
+                'title' => $request->title,
+                'str_number' => $request->str_number,
                 'sip_number' => $request->sip_number,
-                'address' => $request->address,
-                'education_history' => $request->education_history,
             ]);
         }
 
-        if ($user->role === User::ROLE_PERAWAT) {
+        if (in_array($user->role, [User::ROLE_PERAWAT_UK, User::ROLE_PERAWAT_BIASA], true)) {
             Nurse::create([
                 'user_id' => $user->id,
-                'type' => $request->nurse_type,
-                'unit_asal' => $request->nurse_type === 'biasa' ? $request->unit_asal : null,
+                'nurse_type' => $request->nurse_type ?? $user->role,
+                'origin_unit' => $user->role === User::ROLE_PERAWAT_BIASA ? $request->origin_unit : null,
             ]);
         }
 

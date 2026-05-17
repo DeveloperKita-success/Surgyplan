@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Patient extends Model
@@ -13,19 +14,31 @@ class Patient extends Model
     protected $fillable = [
         'medical_record_number',
         'name',
-        'gender',
         'birth_date',
-        'phone',
+        'age',
+        'gender',
+        'origin_room',
         'address',
-        'source_unit',
+        'phone',
+        'created_by',
     ];
 
     protected $casts = [
         'birth_date' => 'date',
     ];
 
-    public function operationBookings(): HasMany
+    public function createdBy(): BelongsTo
     {
-        return $this->hasMany(OperationBooking::class);
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function surgeryRequests(): HasMany
+    {
+        return $this->hasMany(SurgeryRequest::class);
+    }
+
+    public function surgerySchedules(): HasMany
+    {
+        return $this->hasMany(SurgerySchedule::class);
     }
 }

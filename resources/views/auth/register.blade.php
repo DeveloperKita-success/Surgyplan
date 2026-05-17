@@ -68,7 +68,7 @@
                 <option value="dokter" {{ old('role') === 'dokter' ? 'selected' : '' }}>Dokter</option>
                 <option value="perawat" {{ old('role') === 'perawat' ? 'selected' : '' }}>Perawat</option>
             </select>
-            <p class="mt-2 text-xs text-slate-500">Jika memilih Perawat, pilih juga apakah Perawat OK atau Bukan.</p>
+            <p class="mt-2 text-xs text-slate-500">Jika memilih Perawat, pilih juga apakah Perawat UK atau Bukan.</p>
             <x-input-error :messages="$errors->get('role')" class="mt-2" />
         </div>
 
@@ -114,15 +114,15 @@
         <!-- Nurse fields -->
         <div id="nurseFields" class="mt-4 space-y-4" aria-hidden="true">
             <div>
-                <x-input-label for="nurse_type" :value="__('Sebagai Perawat OK?')" />
+                <x-input-label for="nurse_type" :value="__('Sebagai Perawat UK?')" />
                 <select
                     id="nurse_type"
                     name="nurse_type"
                     class="mt-1 block w-full rounded-md border-slate-300 bg-white text-slate-900 shadow-sm focus:border-emerald-500 focus:ring-emerald-500"
                 >
                     <option value="" disabled {{ old('nurse_type') ? '' : 'selected' }}>Pilih opsi</option>
-                    <option value="ok" {{ old('nurse_type') === 'ok' ? 'selected' : '' }}>Ya, Perawat OK</option>
-                    <option value="biasa" {{ old('nurse_type') === 'biasa' ? 'selected' : '' }}>Bukan Perawat OK </option>
+                    <option value="uk" {{ old('nurse_type') === 'uk' ? 'selected' : '' }}>Ya, Perawat UK</option>
+                    <option value="biasa" {{ old('nurse_type') === 'biasa' ? 'selected' : '' }}>Bukan Perawat UK </option>
                 </select>
                 <x-input-error :messages="$errors->get('nurse_type')" class="mt-2" />
             </div>

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -10,15 +11,14 @@ Route::get('/', function () {
 
 Route::get('/dashboard', function () {
     /** @var \App\Models\User $user */
-    $user = auth()->user();
-    $user->loadMissing(['doctor', 'nurse']);
+    $user = Auth::user();
 
     if ($user->role === User::ROLE_DOKTER) {
         return redirect()->route('dashboard.doctor');
     }
 
-    if ($user->role === User::ROLE_PERAWAT && optional($user->nurse)->type === 'ok') {
-        return redirect()->route('dashboard.nurse.ok');
+    if ($user->role === User::ROLE_PERAWAT_UK) {
+        return redirect()->route('dashboard.nurse.uk');
     }
 
     return redirect()->route('dashboard.nurse.regular');
@@ -27,30 +27,27 @@ Route::get('/dashboard', function () {
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard/dokter', function () {
         /** @var \App\Models\User $user */
-        $user = auth()->user();
-        $user->loadMissing('doctor');
+        $user = Auth::user();
 
         abort_unless($user->role === User::ROLE_DOKTER, 403);
 
         return view('dashboard.doctor');
     })->name('dashboard.doctor');
 
-    Route::get('/dashboard/perawat-ok', function () {
+    Route::get('/dashboard/perawat-uk', function () {
         /** @var \App\Models\User $user */
-        $user = auth()->user();
-        $user->loadMissing('nurse');
+        $user = Auth::user();
 
-        abort_unless($user->role === User::ROLE_PERAWAT && optional($user->nurse)->type === 'ok', 403);
+        abort_unless($user->role === User::ROLE_PERAWAT_UK, 403);
 
-        return view('dashboard.nurse-ok');
-    })->name('dashboard.nurse.ok');
+        return view('dashboard.nurse-uk');
+    })->name('dashboard.nurse.uk');
 
     Route::get('/dashboard/perawat', function () {
         /** @var \App\Models\User $user */
-        $user = auth()->user();
-        $user->loadMissing('nurse');
+        $user = Auth::user();
 
-        abort_unless($user->role === User::ROLE_PERAWAT && optional($user->nurse)->type === 'biasa', 403);
+        abort_unless($user->role === User::ROLE_PERAWAT_BIASA, 403);
 
         return view('dashboard.nurse-regular');
     })->name('dashboard.nurse.regular');

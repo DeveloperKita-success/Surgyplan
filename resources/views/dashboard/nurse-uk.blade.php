@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Dashboard Perawat OK
+            Dashboard Perawat UK
         </h2>
     </x-slot>
 
@@ -11,7 +11,7 @@
                 <div class="p-6 text-gray-900">
                     <div class="font-semibold">Selamat datang, {{ auth()->user()->name }}.</div>
                     <div class="mt-1 text-sm text-gray-600">
-                        Role: Perawat · Tipe: OK
+                        Role: Perawat · Tipe: UK
                     </div>
                 </div>
             </div>
