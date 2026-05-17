@@ -1,7 +1,7 @@
 <x-guest-layout>
     <div class="mb-6 text-center">
-        <h1 class="text-2xl font-semibold tracking-tight text-slate-900">Masuk</h1>
-        <p class="mt-2 text-sm leading-relaxed text-slate-600">
+        <h1 class="auth-title text-2xl">Masuk</h1>
+        <p class="auth-subtitle text-sm">
             Gunakan akun Anda untuk mengakses dashboard SurgyPlan.
         </p>
     </div>
@@ -24,7 +24,7 @@
         <!-- Email Address -->
         <div>
             <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="mt-1 block w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
+            <x-text-input id="email" class="form-control mt-1 block w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
 
@@ -34,7 +34,7 @@
 
             <x-text-input
                 id="password"
-                class="mt-1 block w-full"
+                class="form-control mt-1 block w-full"
                 type="password"
                 name="password"
                 required
@@ -66,7 +66,7 @@
             @endif
         </div>
 
-        <x-primary-button class="mt-2 w-full justify-center">
+        <x-primary-button class="btn-auth justify-center">
             {{ __('Log in') }}
         </x-primary-button>
     </form>

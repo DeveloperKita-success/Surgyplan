@@ -15,7 +15,14 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans antialiased text-slate-900">
-        <div class="min-h-screen bg-gradient-to-b from-emerald-50 via-white to-white">
+        @php
+            $isLogin = request()->routeIs('login');
+            $isRegister = request()->routeIs('register');
+            $isForgotPassword = request()->routeIs('password.request');
+            $isResetPassword = request()->routeIs('password.reset');
+            $useSimpleAuthTheme = $isLogin || $isRegister || $isForgotPassword || $isResetPassword;
+        @endphp
+        <div class="min-h-screen {{ $useSimpleAuthTheme ? 'sp-login-bg' : 'bg-gradient-to-b from-emerald-50 via-white to-white' }}">
             <div class="mx-auto flex min-h-screen max-w-7xl flex-col items-center justify-center px-6 py-10">
                 <a href="/" class="flex flex-col items-center gap-3">
                     <x-application-logo class="h-16 w-auto" />
@@ -25,7 +32,7 @@
                     </div>
                 </a>
 
-                <div class="mt-6 w-full sm:max-w-md overflow-hidden rounded-2xl bg-white p-8 shadow-sm ring-1 ring-slate-200">
+                <div class="mt-6 {{ $useSimpleAuthTheme ? 'auth-card' : 'w-full sm:max-w-md overflow-hidden rounded-2xl bg-white p-8 shadow-sm ring-1 ring-slate-200' }}">
                     {{ $slot }}
                 </div>
             </div>

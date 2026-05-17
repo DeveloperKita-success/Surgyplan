@@ -3,6 +3,73 @@
 @tailwind utilities;
 
 @layer utilities {
+	/* Auth background: radial gradient (top center) using SurgyPlan palette */
+	.sp-auth-radial-bg {
+		background-color: #0B2B26;
+		background-image:
+			/* Soft abstract lights (very subtle, blurred shapes) */
+			radial-gradient(60rem 40rem at 20% 25%, rgba(218, 241, 222, 0.14) 0%, rgba(218, 241, 222, 0.0) 60%),
+			radial-gradient(50rem 36rem at 78% 32%, rgba(142, 182, 155, 0.12) 0%, rgba(142, 182, 155, 0.0) 62%),
+			/* Edge lift (prevent corners from looking too dark) */
+			radial-gradient(55rem 40rem at 0% 0%, rgba(142, 182, 155, 0.10) 0%, rgba(142, 182, 155, 0.0) 65%),
+			radial-gradient(55rem 40rem at 100% 0%, rgba(142, 182, 155, 0.10) 0%, rgba(142, 182, 155, 0.0) 65%),
+			radial-gradient(70rem 48rem at 50% 100%, rgba(35, 83, 71, 0.10) 0%, rgba(35, 83, 71, 0.0) 65%),
+			/* Center glow behind auth card */
+			radial-gradient(55rem 45rem at 50% 45%, rgba(218, 241, 222, 0.38) 0%, rgba(142, 182, 155, 0.28) 28%, rgba(35, 83, 71, 0.0) 68%),
+			/* Cinematic vignette (darken corners) */
+			radial-gradient(120% 120% at 50% 50%, rgba(5, 31, 32, 0.0) 45%, rgba(5, 31, 32, 0.18) 78%, rgba(5, 31, 32, 0.35) 100%),
+			/* Base premium green atmosphere */
+			linear-gradient(135deg, #0B2B26 0%, #163832 45%, #235347 100%);
+		background-repeat: no-repeat;
+		background-size: cover;
+		background-attachment: fixed;
+	}
+
+	/* Simple auth background (sample: radial mint -> deep green) */
+	.sp-login-bg {
+		background: radial-gradient(circle at top, #95d5b2, #1b4332);
+		font-family: 'Segoe UI', sans-serif;
+	}
+
+	.auth-card {
+		width: 100%;
+		max-width: 420px;
+		background: rgba(255, 255, 255, 0.9);
+		padding: 35px;
+		border-radius: 20px;
+		box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+	}
+
+	.auth-title {
+		text-align: center;
+		font-weight: 700;
+		color: #1b4332;
+		margin-bottom: 10px;
+	}
+
+	.auth-subtitle {
+		text-align: center;
+		color: #666;
+		margin-bottom: 25px;
+	}
+
+	.form-control {
+		border-radius: 12px !important;
+		padding: 12px !important;
+	}
+
+	.btn-auth {
+		background: linear-gradient(135deg, #2d6a4f, #40916c) !important;
+		border: none !important;
+		color: white !important;
+		padding: 12px !important;
+		border-radius: 12px !important;
+		width: 100%;
+		margin-top: 10px;
+		text-transform: none !important;
+		letter-spacing: normal !important;
+	}
+
 	/* Subtle entrance reveal (fade + translate up) */
 	.sp-reveal {
 		opacity: 0;

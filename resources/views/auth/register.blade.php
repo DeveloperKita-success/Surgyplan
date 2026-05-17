@@ -1,7 +1,7 @@
 <x-guest-layout>
     <div class="mb-6 text-center">
-        <h1 class="text-2xl font-semibold tracking-tight text-slate-900">Buat Akun</h1>
-        <p class="mt-2 text-sm leading-relaxed text-slate-600">Pilih peran Anda untuk melengkapi data yang diperlukan.</p>
+        <h1 class="auth-title text-2xl">Buat Akun</h1>
+        <p class="auth-subtitle text-sm">Pilih peran Anda untuk melengkapi data yang diperlukan.</p>
     </div>
 
     @if (session('status'))
@@ -22,14 +22,14 @@
         <!-- Name -->
         <div>
             <x-input-label for="name" :value="__('Name')" />
-            <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
+            <x-text-input id="name" class="form-control block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
             <x-input-error :messages="$errors->get('name')" class="mt-2" />
         </div>
 
         <!-- Email Address -->
         <div class="mt-4">
             <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" />
+            <x-text-input id="email" class="form-control block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" />
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
 
@@ -37,7 +37,7 @@
         <div class="mt-4">
             <x-input-label for="password" :value="__('Password')" />
 
-            <x-text-input id="password" class="block mt-1 w-full"
+            <x-text-input id="password" class="form-control block mt-1 w-full"
                             type="password"
                             name="password"
                             required autocomplete="new-password" />
@@ -49,7 +49,7 @@
         <div class="mt-4">
             <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
 
-            <x-text-input id="password_confirmation" class="block mt-1 w-full"
+            <x-text-input id="password_confirmation" class="form-control block mt-1 w-full"
                             type="password"
                             name="password_confirmation" required autocomplete="new-password" />
 
@@ -61,7 +61,7 @@
             <select
                 id="role"
                 name="role"
-                class="mt-1 block w-full rounded-md border-slate-300 bg-white text-slate-900 shadow-sm focus:border-emerald-500 focus:ring-emerald-500"
+                class="form-control mt-1 block w-full rounded-md border-slate-300 bg-white text-slate-900 shadow-sm focus:border-emerald-500 focus:ring-emerald-500"
                 required
             >
                 <option value="" disabled {{ old('role') ? '' : 'selected' }}>Pilih jenis akun</option>
@@ -76,17 +76,17 @@
         <div id="doctorFields" class="mt-4 space-y-4" aria-hidden="true">
             <div>
                 <x-input-label for="specialist" :value="__('Spesialis')" />
-                <x-text-input id="specialist" class="mt-1 block w-full" type="text" name="specialist" :value="old('specialist')" autocomplete="off" />
+                <x-text-input id="specialist" class="form-control mt-1 block w-full" type="text" name="specialist" :value="old('specialist')" autocomplete="off" />
                 <x-input-error :messages="$errors->get('specialist')" class="mt-2" />
             </div>
             <div>
                 <x-input-label for="degree" :value="__('Pangkat')" />
-                <x-text-input id="degree" class="mt-1 block w-full" type="text" name="degree" :value="old('degree')" autocomplete="off" />
+                <x-text-input id="degree" class="form-control mt-1 block w-full" type="text" name="degree" :value="old('degree')" autocomplete="off" />
                 <x-input-error :messages="$errors->get('degree')" class="mt-2" />
             </div>
             <div>
                 <x-input-label for="sip_number" :value="__('Nomor SIP / Izin Praktik')" />
-                <x-text-input id="sip_number" class="mt-1 block w-full" type="text" name="sip_number" :value="old('sip_number')" autocomplete="off" />
+                <x-text-input id="sip_number" class="form-control mt-1 block w-full" type="text" name="sip_number" :value="old('sip_number')" autocomplete="off" />
                 <x-input-error :messages="$errors->get('sip_number')" class="mt-2" />
             </div>
             <div>
@@ -94,7 +94,7 @@
                 <textarea
                     id="address"
                     name="address"
-                    class="mt-1 block w-full rounded-md border-slate-300 bg-white text-slate-900 shadow-sm focus:border-emerald-500 focus:ring-emerald-500"
+                    class="form-control mt-1 block w-full rounded-md border-slate-300 bg-white text-slate-900 shadow-sm focus:border-emerald-500 focus:ring-emerald-500"
                     rows="3"
                 >{{ old('address') }}</textarea>
                 <x-input-error :messages="$errors->get('address')" class="mt-2" />
@@ -104,7 +104,7 @@
                 <textarea
                     id="education_history"
                     name="education_history"
-                    class="mt-1 block w-full rounded-md border-slate-300 bg-white text-slate-900 shadow-sm focus:border-emerald-500 focus:ring-emerald-500"
+                    class="form-control mt-1 block w-full rounded-md border-slate-300 bg-white text-slate-900 shadow-sm focus:border-emerald-500 focus:ring-emerald-500"
                     rows="3"
                 >{{ old('education_history') }}</textarea>
                 <x-input-error :messages="$errors->get('education_history')" class="mt-2" />
@@ -118,7 +118,7 @@
                 <select
                     id="nurse_type"
                     name="nurse_type"
-                    class="mt-1 block w-full rounded-md border-slate-300 bg-white text-slate-900 shadow-sm focus:border-emerald-500 focus:ring-emerald-500"
+                    class="form-control mt-1 block w-full rounded-md border-slate-300 bg-white text-slate-900 shadow-sm focus:border-emerald-500 focus:ring-emerald-500"
                 >
                     <option value="" disabled {{ old('nurse_type') ? '' : 'selected' }}>Pilih opsi</option>
                     <option value="ok" {{ old('nurse_type') === 'ok' ? 'selected' : '' }}>Ya, Perawat OK</option>
@@ -132,7 +132,7 @@
                 <select
                     id="unit_asal"
                     name="unit_asal"
-                    class="mt-1 block w-full rounded-md border-slate-300 bg-white text-slate-900 shadow-sm focus:border-emerald-500 focus:ring-emerald-500"
+                    class="form-control mt-1 block w-full rounded-md border-slate-300 bg-white text-slate-900 shadow-sm focus:border-emerald-500 focus:ring-emerald-500"
                 >
                     <option value="" disabled {{ old('unit_asal') ? '' : 'selected' }}>Pilih asal unit</option>
                     <option value="IGD" {{ old('unit_asal') === 'IGD' ? 'selected' : '' }}>IGD</option>
@@ -148,7 +148,7 @@
                 {{ __('Already registered?') }}
             </a>
 
-            <x-primary-button class="justify-center">
+            <x-primary-button class="btn-auth justify-center">
                 {{ __('Register') }}
             </x-primary-button>
         </div>

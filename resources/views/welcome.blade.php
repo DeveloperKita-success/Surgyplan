@@ -46,15 +46,18 @@
         <!-- Splash Screen (click to skip) -->
         <div
             id="splash"
-            class="fixed inset-0 z-50 flex items-center justify-center bg-white transition-opacity duration-500"
+            class="fixed inset-0 z-50 flex items-center justify-center bg-[#DAF1de] transition-opacity duration-500"
             aria-label="Splash screen SurgyPlan"
         >
             <div class="mx-auto w-full max-w-md px-6 text-center">
                 <img
                     src="{{ asset('image/splash.png') }}"
                     alt="Logo SurgyPlan"
-                    class="mx-auto h-64 w-auto "
+                    class="mx-auto w-full max-w-[32rem] h-auto"
                 />
+                <p class="mt-4 text-[20px] font-medium tracking-wide text-slate-700" style="font-family: 'Times New Roman', Times, serif;">
+                    Precision in Every surgical schedule
+                </p>
                 <div class="mt-6" role="status" aria-live="polite">
                     <div class="inline-flex items-center gap-2 rounded-full bg-slate-50 px-4 py-2 text-sm text-slate-700 ring-1 ring-slate-200 motion-safe:animate-pulse">
                         <span
