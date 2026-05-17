@@ -7,15 +7,15 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Authenticatable
 {
     use HasFactory, Notifiable;
-    use HasRoles;
 
     public const ROLE_DOKTER = 'dokter';
-    public const ROLE_PERAWAT = 'perawat';
+    public const ROLE_PERAWAT_UK = 'perawat_uk';
+    public const ROLE_PERAWAT_BIASA = 'perawat_biasa';
 
     /**
      * The attributes that are mass assignable.
@@ -62,6 +62,41 @@ class User extends Authenticatable
         return $this->hasOne(Nurse::class);
     }
 
+    public function createdPatients(): HasMany
+    {
+        return $this->hasMany(Patient::class, 'created_by');
+    }
+
+    public function surgeryRequests(): HasMany
+    {
+        return $this->hasMany(SurgeryRequest::class, 'requested_by');
+    }
+
+    public function ukVerificationChecklists(): HasMany
+    {
+        return $this->hasMany(UkVerificationChecklist::class, 'verified_by');
+    }
+
+    public function surgerySchedulesApproved(): HasMany
+    {
+        return $this->hasMany(SurgerySchedule::class, 'approved_by');
+    }
+
+    public function surgeryHistories(): HasMany
+    {
+        return $this->hasMany(SurgeryHistory::class, 'changed_by');
+    }
+
+    public function guidelines(): HasMany
+    {
+        return $this->hasMany(Guideline::class, 'uploaded_by');
+    }
+
+    public function notifications(): HasMany
+    {
+        return $this->hasMany(UserNotification::class, 'user_id');
+    }
+
     public function isDoctor(): bool
     {
         return $this->role === self::ROLE_DOKTER;
@@ -69,16 +104,16 @@ class User extends Authenticatable
 
     public function isNurse(): bool
     {
-        return $this->role === self::ROLE_PERAWAT;
+        return in_array($this->role, [self::ROLE_PERAWAT_UK, self::ROLE_PERAWAT_BIASA], true);
     }
 
-    public function isOkNurse(): bool
+    public function isUkNurse(): bool
     {
-        return $this->isNurse() && optional($this->nurse)->type === 'ok';
+        return $this->role === self::ROLE_PERAWAT_UK;
     }
 
     public function isRegularNurse(): bool
     {
-        return $this->isNurse() && optional($this->nurse)->type === 'biasa';
+        return $this->role === self::ROLE_PERAWAT_BIASA;
     }
 }

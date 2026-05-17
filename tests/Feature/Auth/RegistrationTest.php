@@ -13,7 +13,7 @@ test('new users can register', function () {
         'password' => 'password',
         'password_confirmation' => 'password',
         'role' => 'perawat',
-        'nurse_type' => 'ok',
+        'nurse_type' => 'uk',
 
         // Simulate browser behavior: hidden inputs submit empty strings,
         // then Laravel converts them to null via ConvertEmptyStringsToNull.

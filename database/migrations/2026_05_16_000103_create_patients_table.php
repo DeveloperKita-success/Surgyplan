@@ -8,23 +8,18 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('patients', function (Blueprint $table) {
+        Schema::create('patients', function (Blueprint $table): void {
             $table->id();
-
-            $table->string('medical_record_number')->nullable();
+            $table->string('medical_record_number')->unique();
             $table->string('name');
-            $table->string('gender', 10)->nullable(); // L/P (opsional)
             $table->date('birth_date')->nullable();
-            $table->string('phone')->nullable();
+            $table->integer('age')->nullable();
+            $table->string('gender');
+            $table->enum('origin_room', ['IGD', 'Bangsal','Poli'])->nullable();
             $table->text('address')->nullable();
-
-            // IGD | Bangsal | Poli (sumber pasien)
-            $table->string('source_unit', 20)->nullable();
-
+            $table->string('phone')->nullable();
+            $table->foreignId('created_by')->constrained('users');
             $table->timestamps();
-
-            $table->unique('medical_record_number');
-            $table->index(['name', 'source_unit']);
         });
     }
 

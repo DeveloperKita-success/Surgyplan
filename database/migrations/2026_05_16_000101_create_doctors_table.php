@@ -8,15 +8,14 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('doctors', function (Blueprint $table) {
+        Schema::create('doctors', function (Blueprint $table): void {
             $table->id();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->string('specialist');
-            $table->string('degree');
-            $table->string('sip_number')->unique();
+            $table->foreignId('user_id')->constrained('users');
+            $table->foreignId('specialist_id')->constrained('specialists');
+            $table->string('title')->nullable();
+            $table->string('str_number')->nullable();
+            $table->string('sip_number')->nullable();
             $table->timestamps();
-
-            $table->unique('user_id');
         });
     }
 
