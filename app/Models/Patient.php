@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Patient extends Model
 {
@@ -35,6 +36,11 @@ class Patient extends Model
     public function surgeryRequests(): HasMany
     {
         return $this->hasMany(SurgeryRequest::class);
+    }
+
+    public function latestSurgeryRequest(): HasOne
+    {
+        return $this->hasOne(SurgeryRequest::class)->latestOfMany();
     }
 
     public function surgerySchedules(): HasMany

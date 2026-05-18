@@ -64,6 +64,7 @@
                     {{ __('Forgot your password?') }}
                 </a>
             @endif
+            
         </div>
 
         <x-primary-button class="btn-auth justify-center">

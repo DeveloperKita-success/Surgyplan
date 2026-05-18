@@ -1,4 +1,21 @@
 @switch($name)
+    @case('dashboard')
+        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none"><path d="M3 13h8V3H3v10Zm10 8h8V11h-8v10ZM3 21h8v-6H3v6Zm10-18h8v6h-8V3Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+        @break
+    @case('patients')
+        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm12 10v-2a3 3 0 0 0-2-2.83M17 3.13a4 4 0 0 1 0 7.75" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        @break
+    @case('nurse')
+        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none"><path d="M12 2v6m-3-3h6M7 22v-2a5 5 0 0 1 10 0v2M12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        @break
+    @case('records')
+        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none"><path d="M8 7h8M8 11h8M8 15h5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M6 3h9l3 3v15a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+        @break
+    @case('settings')
+        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z" stroke="currentColor" stroke-width="2"/>
+        <path d="M19.4 15a7.9 7.9 0 0 0 .05-2l2.05-1.6-2-3.46-2.5 1a8 8 0 0 0-1.7-1l-.38-2.65H9.08L8.7 7.94a8 8 0 0 0-1.7 1l-2.5-1-2 3.46L4.55 13a7.9 7.9 0 0 0 .05 2L2.55 16.6l2 3.46 2.5-1a8 8 0 0 0 1.7 1l.38 2.65h5.84l.38-2.65a8 8 0 0 0 1.7-1l2.5 1 2-3.46L19.4 15Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+        </svg>
+        @break
     @case('user')
         <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none"><path d="M20 21a8 8 0 0 0-16 0M12 13a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
         @break

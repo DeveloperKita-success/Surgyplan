@@ -1,56 +1,29 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\GuidelineController;
 use App\Http\Controllers\ProfileController;
-use App\Models\User;
-use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\PatientController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', function () {
-    /** @var \App\Models\User $user */
-    $user = Auth::user();
-
-    if ($user->role === User::ROLE_DOKTER) {
-        return redirect()->route('dashboard.doctor');
-    }
-
-    if ($user->role === User::ROLE_PERAWAT_UK) {
-        return redirect()->route('dashboard.nurse.uk');
-    }
-
-    return redirect()->route('dashboard.nurse.regular');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/dashboard/dokter', function () {
-        /** @var \App\Models\User $user */
-        $user = Auth::user();
+    Route::prefix('dashboard')->name('dashboard.')->group(function () {
+        Route::get('/dokter', [DashboardController::class, 'doctor'])->name('doctor');
+        Route::get('/perawat-ok', [DashboardController::class, 'nurseUk'])->name('nurse.uk');
+        Route::get('/perawat', [DashboardController::class, 'nurseRegular'])->name('nurse.regular');
+    });
 
-        abort_unless($user->role === User::ROLE_DOKTER, 403);
+    Route::resource('patients', PatientController::class)->except(['create', 'store']);
 
-        return view('dashboard.doctor');
-    })->name('dashboard.doctor');
-
-    Route::get('/dashboard/perawat-uk', function () {
-        /** @var \App\Models\User $user */
-        $user = Auth::user();
-
-        abort_unless($user->role === User::ROLE_PERAWAT_UK, 403);
-
-        return view('dashboard.nurse-uk');
-    })->name('dashboard.nurse.uk');
-
-    Route::get('/dashboard/perawat', function () {
-        /** @var \App\Models\User $user */
-        $user = Auth::user();
-
-        abort_unless($user->role === User::ROLE_PERAWAT_BIASA, 403);
-
-        return view('dashboard.nurse-regular');
-    })->name('dashboard.nurse.regular');
+    Route::resource('guidelines', GuidelineController::class)->only(['index', 'store', 'destroy']);
 });
 
 Route::middleware('auth')->group(function () {

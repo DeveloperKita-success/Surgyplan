@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div>
             <p class="text-sm font-medium text-slate-500">Koordinasi unit kamar operasi</p>
-            <h1 class="text-2xl font-bold text-slate-900">Dashboard Perawat UK</h1>
+            <h1 class="text-2xl font-bold text-slate-900">Dashboard Perawat OK</h1>
         </div>
     </x-slot>
 
