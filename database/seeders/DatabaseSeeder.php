@@ -17,10 +17,9 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $specialist = Specialist::firstOrCreate(
-            ['name' => 'Bedah Umum'],
-            ['description' => 'Spesialis bedah umum']
-        );
+        $this->call(SpecialistSeeder::class);
+
+        $specialist = Specialist::firstOrCreate(['name' => 'Spesialis Bedah Umum']);
 
         $doctorUser = User::firstOrCreate(
             ['email' => 'dokter@example.com'],
@@ -42,9 +41,9 @@ class DatabaseSeeder extends Seeder
         );
 
         $ukNurseUser = User::firstOrCreate(
-            ['email' => 'perawat.uk@example.com'],
+            ['email' => 'perawat.OK@example.com'],
             [
-                'name' => 'Perawat UK Demo',
+                'name' => 'Perawat OK Demo',
                 'password' => Hash::make('password'),
                 'role' => User::ROLE_PERAWAT_UK,
             ]

@@ -1,23 +1,39 @@
-<nav class="space-y-2">
-    <p class="px-3 text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">Menu Perawat Reguler</p>
-
-    <a href="{{ route('dashboard.nurse.regular') }}" class="flex items-center gap-3 rounded-lg bg-cyan-50 px-3 py-3 text-sm font-semibold text-cyan-800">
-        <span class="flex h-9 w-9 items-center justify-center rounded-md bg-white text-cyan-700 shadow-sm">
-            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none"><path d="M4 13h6V4H4v9Zm10 7h6V4h-6v16ZM4 20h6v-3H4v3Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
-        </span>
-        Dashboard
-    </a>
-
-    @foreach ([
-        ['label' => 'Data Pasien', 'icon' => 'user'],
+@php
+    $items = [
+        ['label' => 'Dashboard', 'icon' => 'dashboard', 'route' => 'dashboard.nurse.regular', 'active' => 'dashboard.nurse.regular'],
+        ['label' => 'Data Pasien', 'icon' => 'user', 'route' => 'patients.index', 'active' => 'patients.*'],
         ['label' => 'Pengajuan Operasi', 'icon' => 'clipboard'],
-        ['label' => 'Buku Pedoman', 'icon' => 'book'],
-    ] as $item)
-        <a href="#" class="flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900">
-            <span class="flex h-9 w-9 items-center justify-center rounded-md bg-slate-100 text-slate-500">
+        ['label' => 'Buku Pedoman', 'icon' => 'book', 'route' => 'guidelines.index', 'active' => 'guidelines.*'],
+    ];
+@endphp
+
+<nav class="space-y-1.5">
+    <p class="px-3 pb-2 text-xs font-semibold uppercase tracking-[0.22em] text-green-100/80">Menu Perawat Reguler</p>
+
+    @foreach ($items as $item)
+        @php
+            $routeName = $item['route'] ?? null;
+            $activePattern = $item['active'] ?? null;
+            $isActive = $activePattern ? request()->routeIs($activePattern) : false;
+            $href = $routeName && Route::has($routeName) ? route($routeName) : '#';
+
+            $linkClass = $isActive
+                ? 'bg-white/20 text-white shadow-lg backdrop-blur-md border border-white/20 scale-[1.02]'
+                : 'text-green-100 hover:bg-white/10';
+
+            $iconClass = $isActive
+                ? 'bg-white/20 text-white ring-1 ring-white/20'
+                : 'bg-white/10 text-green-100/90 ring-1 ring-white/10';
+        @endphp
+
+        <a
+            href="{{ $href }}"
+            class="flex items-center gap-3 rounded-2xl px-3 py-2.5 text-sm font-semibold transition-all duration-300 ease-in-out {{ $linkClass }}"
+        >
+            <span class="flex h-10 w-10 items-center justify-center rounded-2xl {{ $iconClass }} transition-all duration-300 ease-in-out">
                 @include('layouts.sidebars.icons', ['name' => $item['icon']])
             </span>
-            {{ $item['label'] }}
+            <span class="truncate">{{ $item['label'] }}</span>
         </a>
     @endforeach
 </nav>

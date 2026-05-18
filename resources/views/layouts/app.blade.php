@@ -8,16 +8,25 @@
         <title>{{ config('app.name', 'SurgyPlan') }}</title>
 
         <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap" rel="stylesheet" />
+        <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700&display=swap" rel="stylesheet" />
 
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="font-sans antialiased text-slate-900">
+    <body class="relative min-h-screen overflow-x-hidden bg-gradient-to-br from-green-50 to-emerald-100 font-sans antialiased text-slate-900">
+        <div class="pointer-events-none absolute inset-0 overflow-hidden">
+            <div class="absolute -left-28 -top-24 h-96 w-96 rounded-full bg-white/40 blur-3xl"></div>
+            <div class="absolute -right-32 top-10 h-[28rem] w-[28rem] rounded-full bg-emerald-200/40 blur-3xl"></div>
+            <div class="absolute left-1/2 top-24 h-56 w-56 -translate-x-1/2 rounded-full bg-green-200/30 blur-3xl"></div>
+            <div class="absolute -bottom-40 left-10 h-[32rem] w-[32rem] rounded-[6rem] bg-white/30 blur-3xl"></div>
+
+            <div class="absolute left-12 top-16 h-24 w-24 rounded-full border border-emerald-900/10"></div>
+            <div class="absolute right-24 top-36 h-40 w-40 rounded-full border border-emerald-900/10"></div>
+        </div>
         @php
             $user = auth()->user();
             $roleLabel = match ($user?->role) {
                 \App\Models\User::ROLE_DOKTER => 'Dokter',
-                \App\Models\User::ROLE_PERAWAT_UK => 'Perawat UK',
+                \App\Models\User::ROLE_PERAWAT_UK => 'Perawat OK',
                 \App\Models\User::ROLE_PERAWAT_BIASA => 'Perawat Reguler',
                 default => 'Pengguna',
             };
@@ -30,7 +39,11 @@
             };
         @endphp
 
-        <div x-data="{ sidebarOpen: false }" class="min-h-screen bg-slate-100">
+        <div
+            x-data="{ sidebarOpen: false }"
+            @sidebar-open.window="sidebarOpen = true"
+            class="relative z-10 min-h-screen"
+        >
             <div
                 x-show="sidebarOpen"
                 x-transition.opacity
@@ -39,114 +52,81 @@
             ></div>
 
             <aside
-                class="fixed inset-y-0 left-0 z-40 flex w-72 -translate-x-full flex-col border-r border-slate-200 bg-white transition duration-200 lg:translate-x-0"
+                class="fixed left-0 top-0 z-40 flex h-screen w-64 -translate-x-[110%] flex-col overflow-hidden shadow-xl transition duration-300 ease-in-out lg:translate-x-0"
                 :class="{ 'translate-x-0': sidebarOpen }"
             >
-                <div class="flex h-20 items-center gap-3 border-b border-slate-200 px-6">
-                    <div class="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-cyan-700 shadow-sm">
-                        <img
-                            src="{{ asset('image/splash.png') }}"
-                            alt="Logo SurgyPlan"
-                            class="h-9 w-9 object-contain"
-                        />
-                    </div>
-                    <div>
-                        <p class="text-lg font-bold leading-tight text-slate-900">SurgyPlan</p>
-                        <p class="text-sm text-slate-500">Sistem Operasi</p>
+                <div class="absolute inset-0 bg-gradient-to-b from-emerald-900 via-emerald-800 to-green-600"></div>
+                <div class="absolute inset-0 bg-white/10 backdrop-blur-xl"></div>
+
+                <div class="pointer-events-none absolute inset-0 overflow-hidden">
+                    <div class="absolute -right-16 -top-16 h-56 w-56 rounded-full border border-white/10"></div>
+                    <div class="absolute -left-24 top-28 h-72 w-72 rounded-full border border-white/10"></div>
+                    <div class="absolute -bottom-16 right-10 h-64 w-64 rounded-[4rem] bg-white/10 blur-3xl opacity-30"></div>
+
+                    <div class="absolute bottom-6 left-6 grid grid-cols-6 gap-2 opacity-20">
+                        @for ($i = 0; $i < 18; $i++)
+                            <span class="h-1 w-1 rounded-full bg-white"></span>
+                        @endfor
                     </div>
                 </div>
 
-                <div class="flex-1 overflow-y-auto px-4 py-5">
-                    @if ($sidebarView)
-                        @include($sidebarView)
-                    @endif
-                </div>
+                <div class="relative flex h-full flex-col p-4">
+                    <div class="flex items-center gap-3 px-2 py-2">
+                        <div class="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-white/15 shadow-md ring-1 ring-white/15">
+                            <img
+                                src="{{ asset('image/splash.png') }}"
+                                alt="Logo SurgyPlan"
+                                class="h-8 w-8 object-contain"
+                            />
+                        </div>
+                        <div class="min-w-0">
+                            <p class="truncate text-base font-bold tracking-tight text-white">SurgyPlan</p>
+                            <p class="truncate text-xs font-medium text-green-100/90">Hospital Dashboard</p>
+                        </div>
+                    </div>
 
-                <div class="border-t border-slate-200 p-4">
-                    <div class="rounded-lg bg-slate-50 p-4">
-                        <p class="truncate text-sm font-semibold text-slate-900">{{ $user?->name }}</p>
-                        <p class="mt-1 text-sm text-slate-500">{{ $roleLabel }}</p>
+                    <div class="mt-3 flex-1 overflow-y-auto px-1 pb-2">
+                        @if ($sidebarView)
+                            @include($sidebarView)
+                        @endif
+                    </div>
+
+                    <div class="mt-3 rounded-2xl bg-white/10 p-3 backdrop-blur-md ring-1 ring-white/15">
+                        <p class="truncate text-sm font-semibold text-white">{{ $user?->name }}</p>
+                        <p class="mt-1 text-xs font-medium text-green-100/90">{{ $roleLabel }}</p>
+
+                        <div class="mt-3 flex items-center gap-2">
+                            <a
+                                href="{{ route('profile.edit') }}"
+                                class="inline-flex flex-1 items-center justify-center rounded-xl bg-white/10 px-3 py-2 text-xs font-semibold text-white transition-all duration-300 ease-in-out hover:bg-white/20"
+                            >
+                                Pengaturan
+                            </a>
+                            <form method="POST" action="{{ route('logout') }}" class="flex-1">
+                                @csrf
+                                <button
+                                    type="submit"
+                                    class="inline-flex w-full items-center justify-center rounded-xl bg-white/10 px-3 py-2 text-xs font-semibold text-white transition-all duration-300 ease-in-out hover:bg-white/20"
+                                >
+                                    Logout
+                                </button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </aside>
 
-            <div class="lg:pl-72">
-                <header class="sticky top-0 z-20 border-b border-slate-200 bg-white/95 backdrop-blur">
-                    <div class="flex h-20 items-center gap-4 px-4 sm:px-6 lg:px-8">
-                        <button
-                            type="button"
-                            class="inline-flex h-11 w-11 items-center justify-center rounded-lg border border-slate-200 text-slate-600 lg:hidden"
-                            @click="sidebarOpen = true"
-                            aria-label="Buka menu"
-                        >
-                            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none">
-                                <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                            </svg>
-                        </button>
+            @include('layouts.navigation')
 
-                        <div class="min-w-0 flex-1">
-                            @isset($header)
-                                {{ $header }}
-                            @else
-                                <h1 class="text-xl font-semibold text-slate-900">Dashboard</h1>
-                            @endisset
-                        </div>
-
-                        <label class="hidden min-w-[280px] items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-slate-500 md:flex">
-                            <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none">
-                                <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/>
-                                <path d="m20 20-3.5-3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                            </svg>
-                            <input type="search" placeholder="Cari pasien, jadwal, atau laporan" class="w-full border-0 bg-transparent p-0 text-sm text-slate-700 placeholder:text-slate-400 focus:ring-0">
-                        </label>
-
-                        <button type="button" class="relative inline-flex h-11 w-11 items-center justify-center rounded-lg border border-slate-200 text-slate-600" aria-label="Notifikasi">
-                            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none">
-                                <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M13.73 21a2 2 0 0 1-3.46 0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                            </svg>
-                            <span class="absolute right-2 top-2 h-2.5 w-2.5 rounded-full bg-rose-500"></span>
-                        </button>
-
-                        <div x-data="{ open: false }" class="relative">
-                            <button
-                                type="button"
-                                class="flex items-center gap-3 rounded-lg border border-slate-200 px-3 py-2 text-left"
-                                @click="open = ! open"
-                            >
-                                <span class="flex h-10 w-10 items-center justify-center rounded-lg bg-cyan-100 text-sm font-bold text-cyan-800">
-                                    {{ collect(explode(' ', $user?->name ?? 'U'))->map(fn ($part) => mb_substr($part, 0, 1))->take(2)->implode('') }}
-                                </span>
-                                <span class="hidden sm:block">
-                                    <span class="block max-w-40 truncate text-sm font-semibold text-slate-900">{{ $user?->name }}</span>
-                                    <span class="block text-xs text-slate-500">{{ $roleLabel }}</span>
-                                </span>
-                            </button>
-
-                            <div
-                                x-show="open"
-                                x-transition
-                                @click.outside="open = false"
-                                class="absolute right-0 mt-3 w-52 rounded-lg border border-slate-200 bg-white p-2 shadow-lg"
-                            >
-                                <a href="{{ route('profile.edit') }}" class="block rounded-md px-3 py-2 text-sm text-slate-700 hover:bg-slate-100">
-                                    Profil
-                                </a>
-                                <form method="POST" action="{{ route('logout') }}">
-                                    @csrf
-                                    <button type="submit" class="mt-1 block w-full rounded-md px-3 py-2 text-left text-sm text-rose-600 hover:bg-rose-50">
-                                        Logout
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
+            <main class="ml-0 p-6 pt-20 sm:p-8 sm:pt-20 lg:ml-64">
+                @isset($header)
+                    <div class="mb-6">
+                        {{ $header }}
                     </div>
-                </header>
+                @endisset
 
-                <main class="px-4 py-6 sm:px-6 lg:px-8">
-                    {{ $slot }}
-                </main>
-            </div>
+                {{ $slot }}
+            </main>
         </div>
     </body>
 </html>
