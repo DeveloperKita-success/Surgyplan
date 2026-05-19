@@ -69,8 +69,6 @@ class PatientController extends Controller
 
         $patient->loadMissing([
             'createdBy',
-            'latestSurgeryRequest.diagnosis',
-            'latestSurgeryRequest.procedure',
             'latestSurgeryRequest.requestedBy',
             'latestSurgeryRequest.requestedDoctor.user',
             'surgeryRequests' => fn ($q) => $q->latest()->take(5),

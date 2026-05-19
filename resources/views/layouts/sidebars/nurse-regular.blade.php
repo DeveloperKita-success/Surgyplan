@@ -2,7 +2,7 @@
     $items = [
         ['label' => 'Dashboard', 'icon' => 'dashboard', 'route' => 'dashboard.nurse.regular', 'active' => 'dashboard.nurse.regular'],
         ['label' => 'Data Pasien', 'icon' => 'user', 'route' => 'patients.index', 'active' => 'patients.*'],
-        ['label' => 'Pengajuan Operasi', 'icon' => 'clipboard'],
+        ['label' => 'Pengajuan Operasi', 'icon' => 'clipboard', 'route' => 'nurse.regular.room-operation.create', 'active' => 'nurse.regular.room-operation.*'],
         ['label' => 'Buku Pedoman', 'icon' => 'book', 'route' => 'guidelines.index', 'active' => 'guidelines.*'],
     ];
 @endphp

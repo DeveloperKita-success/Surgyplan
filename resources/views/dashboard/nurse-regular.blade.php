@@ -23,48 +23,48 @@
 
         <section class="grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
             <div class="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-                <h2 class="text-lg font-semibold">Form Pengajuan Cepat</h2>
+                <h2 class="text-lg font-semibold">Pengajuan Operasi Ruang</h2>
+                <p class="mt-2 text-sm text-slate-500">
+                    Gunakan form khusus untuk mengisi No RM, biodata pasien, diagnosis, tindakan, dan checklist persiapan operasi.
+                </p>
+
                 <div class="mt-5 grid gap-4 md:grid-cols-2">
-                    <label class="space-y-2">
-                        <span class="text-sm font-medium text-slate-600">Nama Pasien</span>
-                        <input type="text" placeholder="Masukkan nama pasien" class="w-full rounded-lg border-slate-200 text-sm focus:border-cyan-600 focus:ring-cyan-600">
-                    </label>
-                    <label class="space-y-2">
-                        <span class="text-sm font-medium text-slate-600">Dokter Tujuan</span>
-                        <select class="w-full rounded-lg border-slate-200 text-sm focus:border-cyan-600 focus:ring-cyan-600">
-                            <option>Pilih dokter</option>
-                            <option>dr. Andi</option>
-                            <option>dr. Maya</option>
-                        </select>
-                    </label>
-                    <label class="space-y-2 md:col-span-2">
-                        <span class="text-sm font-medium text-slate-600">Catatan Klinis</span>
-                        <textarea rows="4" placeholder="Ringkasan kondisi pasien" class="w-full rounded-lg border-slate-200 text-sm focus:border-cyan-600 focus:ring-cyan-600"></textarea>
-                    </label>
+                    @foreach ([
+                        ['label' => 'No RM', 'value' => 'Input langsung dari rekam medis'],
+                        ['label' => 'Diagnosa', 'value' => 'ICD-10'],
+                        ['label' => 'Tindakan', 'value' => 'ICD-9 CM'],
+                        ['label' => 'Checklist', 'value' => 'Consent, lab, radiologi, vital, riwayat'],
+                    ] as $item)
+                        <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                            <p class="text-sm font-medium text-slate-500">{{ $item['label'] }}</p>
+                            <p class="mt-2 font-semibold text-slate-900">{{ $item['value'] }}</p>
+                        </div>
+                    @endforeach
                 </div>
-                <button type="button" class="mt-5 rounded-lg bg-cyan-700 px-4 py-2.5 text-sm font-semibold text-white hover:bg-cyan-800">
-                    Simpan Draft
-                </button>
+
+                <a href="{{ route('nurse.regular.room-operation.create') }}" class="mt-5 inline-flex rounded-lg bg-cyan-700 px-4 py-2.5 text-sm font-semibold text-white hover:bg-cyan-800">
+                    Buka form pengajuan operasi
+                </a>
             </div>
 
             <div class="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-                <h2 class="text-lg font-semibold">Detail Pasien</h2>
+                <h2 class="text-lg font-semibold">Detail Flow</h2>
                 <div class="mt-5 space-y-4">
                     <div>
-                        <p class="text-sm text-slate-500">Nama</p>
-                        <p class="font-semibold text-slate-900">Budi Santoso</p>
+                        <p class="text-sm text-slate-500">Ruang asal</p>
+                        <p class="font-semibold text-slate-900">IGD, Bangsal, Poli</p>
                     </div>
                     <div>
-                        <p class="text-sm text-slate-500">Unit Asal</p>
-                        <p class="font-semibold text-slate-900">{{ optional(auth()->user()->nurse)->origin_unit ?? 'IGD' }}</p>
+                        <p class="text-sm text-slate-500">Status prioritas</p>
+                        <p class="font-semibold text-slate-900">Imminent, Cito, Urgent, Expedited, Elektif</p>
                     </div>
                     <div>
-                        <p class="text-sm text-slate-500">Status Checklist</p>
-                        <p class="font-semibold text-amber-700">6 dari 8 item selesai</p>
+                        <p class="text-sm text-slate-500">Upload dokumen</p>
+                        <p class="font-semibold text-slate-900">Consent bedah, consent anestesi, dan hasil lab</p>
                     </div>
                     <div>
-                        <p class="text-sm text-slate-500">Jadwal</p>
-                        <p class="font-semibold text-slate-900">18 Mei 2026, 10:30</p>
+                        <p class="text-sm text-slate-500">Akses</p>
+                        <p class="font-semibold text-slate-900">Hanya perawat biasa</p>
                     </div>
                 </div>
             </div>

@@ -14,8 +14,8 @@ class SurgeryRequest extends Model
 
     protected $fillable = [
         'patient_id',
-        'diagnosis_id',
-        'procedure_id',
+        'diagnosis_text',
+        'procedure_text',
         'requested_by',
         'requested_doctor_id',
         'requested_date',
@@ -33,16 +33,6 @@ class SurgeryRequest extends Model
     public function patient(): BelongsTo
     {
         return $this->belongsTo(Patient::class);
-    }
-
-    public function diagnosis(): BelongsTo
-    {
-        return $this->belongsTo(Diagnosis::class);
-    }
-
-    public function procedure(): BelongsTo
-    {
-        return $this->belongsTo(Procedure::class);
     }
 
     public function requestedBy(): BelongsTo

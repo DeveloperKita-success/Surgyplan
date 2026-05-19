@@ -46,15 +46,6 @@ class PatientPreoperativeChecklist extends Model
         'anesthesia_consent' => 'bool',
         'lab_result_complete' => 'bool',
         'radiology_available' => 'bool',
-        'anesthesia_consultation_done' => 'bool',
-        'vital_sign_stable' => 'bool',
-        'fasting_more_than_6_hours' => 'bool',
-        'blood_available' => 'bool',
-        'infusion_installed' => 'bool',
-        'catheter_installed' => 'bool',
-        'surgical_area_shaved' => 'bool',
-        'jewelry_removed' => 'bool',
-        'has_previous_surgery' => 'bool',
         'previous_surgery_date' => 'date',
     ];
 
