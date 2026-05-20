@@ -6,6 +6,7 @@ use App\Models\Guideline;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
@@ -14,7 +15,7 @@ class GuidelineController extends Controller
     private function abortUnlessAllowedRole(): void
     {
         /** @var User|null $user */
-        $user = auth()->user();
+        $user = Auth::user();
 
         abort_unless($user && in_array($user->role, [User::ROLE_DOKTER, User::ROLE_PERAWAT_BIASA, User::ROLE_PERAWAT_UK], true), 403);
     }
@@ -54,7 +55,7 @@ class GuidelineController extends Controller
         $this->abortUnlessAllowedRole();
 
         /** @var User $user */
-        $user = auth()->user();
+        $user = Auth::user();
 
         $data = $request->validate([
             'title' => ['required', 'string', 'max:255'],
@@ -86,7 +87,7 @@ class GuidelineController extends Controller
         $this->abortUnlessAllowedRole();
 
         /** @var User $user */
-        $user = auth()->user();
+        $user = Auth::user();
 
         abort_unless($user->isDoctor() || $guideline->uploaded_by === $user->id, 403);
 

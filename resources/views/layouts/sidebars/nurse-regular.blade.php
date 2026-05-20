@@ -1,9 +1,18 @@
 @php
     $items = [
-        ['label' => 'Dashboard', 'icon' => 'dashboard', 'route' => 'nurse-regular.dashboard', 'active' => 'nurse-regular.dashboard'],
-        ['label' => 'Data Patient', 'icon' => 'user', 'route' => 'patients.index', 'active' => 'patients.*'],
-        ['label' => 'Buat Pengajuan', 'icon' => 'clipboard', 'route' => 'nurse.regular.room-operation.create', 'active' => 'nurse.regular.room-operation.*'],
-        ['label' => 'Daftar Pengajuan', 'icon' => 'records', 'route' => 'nurse-regular.surgery-requests.index', 'active' => 'nurse-regular.surgery-requests.*'],
+        [
+            'label' => 'Dashboard',
+            'icon' => 'dashboard',
+            'route' => 'nurse-regular.dashboard',
+            'active' => 'nurse-regular.dashboard',
+        ],
+        ['label' => 'Data Patient', 'icon' => 'user', 'route' => 'nurse-regular.patients.index', 'active' => 'nurse-regular.patients.*'],
+        [
+            'label' => 'Daftar Pengajuan',
+            'icon' => 'records',
+            'route' => 'nurse-regular.surgery-requests.index',
+            'active' => 'nurse-regular.surgery-requests.*',
+        ],
         ['label' => 'Buku Pedoman', 'icon' => 'book', 'route' => 'guidelines.index', 'active' => 'guidelines.*'],
     ];
 @endphp
@@ -27,11 +36,10 @@
                 : 'bg-white/10 text-green-100/90 ring-1 ring-white/10';
         @endphp
 
-        <a
-            href="{{ $href }}"
-            class="flex items-center gap-3 rounded-2xl px-3 py-2.5 text-sm font-semibold transition-all duration-300 ease-in-out {{ $linkClass }}"
-        >
-            <span class="flex h-10 w-10 items-center justify-center rounded-2xl {{ $iconClass }} transition-all duration-300 ease-in-out">
+        <a href="{{ $href }}"
+            class="flex items-center gap-3 rounded-2xl px-3 py-2.5 text-sm font-semibold transition-all duration-300 ease-in-out {{ $linkClass }}">
+            <span
+                class="flex h-10 w-10 items-center justify-center rounded-2xl {{ $iconClass }} transition-all duration-300 ease-in-out">
                 @include('layouts.sidebars.icons', ['name' => $item['icon']])
             </span>
             <span class="truncate">{{ $item['label'] }}</span>

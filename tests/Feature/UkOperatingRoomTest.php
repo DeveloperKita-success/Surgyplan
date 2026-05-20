@@ -9,15 +9,15 @@ it('lets uk nurses manage operating rooms', function () {
     $specialist = Specialist::create(['name' => 'Bedah Umum']);
 
     $this->actingAs($ukNurse)
-        ->get(route('uk.rooms.index'))
+        ->get(route('nurse-uk.rooms.index'))
         ->assertOk();
 
     $this->actingAs($ukNurse)
-        ->get(route('uk.rooms.create'))
+        ->get(route('nurse-uk.rooms.create'))
         ->assertOk();
 
     $this->actingAs($ukNurse)
-        ->post(route('uk.rooms.store'), [
+        ->post(route('nurse-uk.rooms.store'), [
             'room_code' => 'OK-01',
             'room_name' => 'Kamar Operasi 01',
             'specialist_id' => $specialist->id,
@@ -35,22 +35,22 @@ it('lets uk nurses manage operating rooms', function () {
     ]);
 
     $this->actingAs($ukNurse)
-        ->get(route('uk.rooms.show', $room))
+        ->get(route('nurse-uk.rooms.show', $room))
         ->assertOk()
         ->assertSee('Kamar Operasi 01');
 
     $this->actingAs($ukNurse)
-        ->get(route('uk.rooms.edit', $room))
+        ->get(route('nurse-uk.rooms.edit', $room))
         ->assertOk();
 
     $this->actingAs($ukNurse)
-        ->put(route('uk.rooms.update', $room), [
+        ->put(route('nurse-uk.rooms.update', $room), [
             'room_code' => 'OK-01',
             'room_name' => 'Kamar Operasi Utama',
             'specialist_id' => $specialist->id,
             'status' => 'perawatan',
         ])
-        ->assertRedirect(route('uk.rooms.show', $room));
+        ->assertRedirect(route('nurse-uk.rooms.show', $room));
 
     $this->assertDatabaseHas('operating_rooms', [
         'id' => $room->id,
@@ -59,8 +59,8 @@ it('lets uk nurses manage operating rooms', function () {
     ]);
 
     $this->actingAs($ukNurse)
-        ->delete(route('uk.rooms.destroy', $room))
-        ->assertRedirect(route('uk.rooms.index'));
+        ->delete(route('nurse-uk.rooms.destroy', $room))
+        ->assertRedirect(route('nurse-uk.rooms.index'));
 
     $this->assertDatabaseMissing('operating_rooms', [
         'id' => $room->id,
@@ -76,11 +76,11 @@ it('blocks non uk nurses from managing operating rooms', function () {
     ]);
 
     $this->actingAs($regularNurse)
-        ->get(route('uk.rooms.index'))
+        ->get(route('nurse-uk.rooms.index'))
         ->assertForbidden();
 
     $this->actingAs($regularNurse)
-        ->post(route('uk.rooms.store'), [
+        ->post(route('nurse-uk.rooms.store'), [
             'room_code' => 'OK-03',
             'room_name' => 'Kamar Operasi 03',
             'status' => 'siap',
@@ -88,6 +88,6 @@ it('blocks non uk nurses from managing operating rooms', function () {
         ->assertForbidden();
 
     $this->actingAs($regularNurse)
-        ->delete(route('uk.rooms.destroy', $room))
+        ->delete(route('nurse-uk.rooms.destroy', $room))
         ->assertForbidden();
 });

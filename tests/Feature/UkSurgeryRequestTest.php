@@ -52,16 +52,16 @@ it('lets uk nurses review and approve surgery requests', function () {
     ['ukNurse' => $ukNurse, 'request' => $request, 'room' => $room] = createUkRequestFixture();
 
     $this->actingAs($ukNurse)
-        ->get(route('uk.requests.index'))
+        ->get(route('nurse-uk.requests.index'))
         ->assertOk()
         ->assertSee('Pasien UK');
 
     $this->actingAs($ukNurse)
-        ->get(route('uk.requests.show', $request))
+        ->get(route('nurse-uk.requests.show', $request))
         ->assertOk();
 
     $this->actingAs($ukNurse)
-        ->post(route('uk.requests.decide', $request), [
+        ->post(route('nurse-uk.requests.decide', $request), [
             'patient_wristband_installed' => '1',
             'doctor_present' => '1',
             'oxygen_saturation' => '99%',
@@ -74,7 +74,7 @@ it('lets uk nurses review and approve surgery requests', function () {
             'operating_room_id' => $room->id,
             'end_time' => '12:00',
         ])
-        ->assertRedirect(route('uk.requests.show', $request));
+        ->assertRedirect(route('nurse-uk.requests.show', $request));
 
     $this->assertDatabaseHas('surgery_requests', [
         'id' => $request->id,
@@ -92,6 +92,6 @@ it('blocks non uk nurses from reviewing surgery requests', function () {
     ['doctorUser' => $doctorUser, 'request' => $request] = createUkRequestFixture();
 
     $this->actingAs($doctorUser)
-        ->get(route('uk.requests.show', $request))
+        ->get(route('nurse-uk.requests.show', $request))
         ->assertForbidden();
 });

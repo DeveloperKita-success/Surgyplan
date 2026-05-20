@@ -73,5 +73,7 @@ class DatabaseSeeder extends Seeder
                 'origin_unit' => 'IGD',
             ]
         );
+
+        $this->call(PendingSurgeryRequestSeeder::class);
     }
 }

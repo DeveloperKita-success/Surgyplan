@@ -1,11 +1,11 @@
 @php
     $items = [
-        ['label' => 'Dashboard', 'icon' => 'dashboard', 'route' => 'uk.dashboard', 'active' => 'uk.dashboard'],
-        ['label' => 'Data Patient', 'icon' => 'user', 'route' => 'patients.index', 'active' => 'patients.*'],
-        ['label' => 'Pengajuan Operasi', 'icon' => 'clipboard', 'route' => 'uk.requests.index', 'active' => 'uk.requests.*'],
-        ['label' => 'Jadwal Operasi', 'icon' => 'calendar', 'route' => 'uk.schedules.index', 'active' => 'uk.schedules.*'],
-        ['label' => 'Kamar Operasi', 'icon' => 'room', 'route' => 'uk.rooms.index', 'active' => 'uk.rooms.*'],
-        ['label' => 'Dokter', 'icon' => 'doctor', 'route' => 'uk.doctors.index', 'active' => 'uk.doctors.*'],
+        ['label' => 'Dashboard', 'icon' => 'dashboard', 'route' => 'nurse-uk.dashboard', 'active' => 'nurse-uk.dashboard'],
+        ['label' => 'Data Patient', 'icon' => 'user', 'route' => 'nurse-regular.patients.index', 'active' => 'nurse-regular.patients.*'],
+        ['label' => 'Pengajuan Operasi', 'icon' => 'clipboard', 'route' => 'nurse-uk.requests.index', 'active' => 'nurse-uk.requests.*'],
+        ['label' => 'Jadwal Operasi', 'icon' => 'calendar', 'route' => 'nurse-uk.schedules.index', 'active' => 'nurse-uk.schedules.*'],
+        ['label' => 'Kamar Operasi', 'icon' => 'room', 'route' => 'nurse-uk.rooms.index', 'active' => 'nurse-uk.rooms.*'],
+        ['label' => 'Dokter', 'icon' => 'doctor', 'route' => 'nurse-uk.doctors.index', 'active' => 'nurse-uk.doctors.*'],
         ['label' => 'Buku Pedoman', 'icon' => 'book', 'route' => 'guidelines.index', 'active' => 'guidelines.*'],
     ];
 @endphp

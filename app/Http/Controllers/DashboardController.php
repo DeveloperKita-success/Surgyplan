@@ -19,7 +19,7 @@ class DashboardController extends Controller
         }
 
         if ($user->role === User::ROLE_PERAWAT_UK) {
-            return redirect()->route('uk.dashboard');
+            return redirect()->route('nurse-uk.dashboard');
         }
 
         return redirect()->route('nurse-regular.dashboard');
@@ -32,7 +32,7 @@ class DashboardController extends Controller
 
         abort_unless($user->role === User::ROLE_DOKTER, 403);
 
-        return view('dashboard.doctor');
+        return view('doctor.dashboard');
     }
 
     public function nurseUk(): View
@@ -42,7 +42,7 @@ class DashboardController extends Controller
 
         abort_unless($user->role === User::ROLE_PERAWAT_UK, 403);
 
-        return view('dashboard.nurse-uk');
+        return view('nurse-uk.dashboard');
     }
 
     public function nurseRegular(): View
@@ -52,6 +52,6 @@ class DashboardController extends Controller
 
         abort_unless($user->role === User::ROLE_PERAWAT_BIASA, 403);
 
-        return view('dashboard.nurse-regular');
+        return view('nurse-regular.dashboard');
     }
 }
