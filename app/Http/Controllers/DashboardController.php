@@ -15,14 +15,14 @@ class DashboardController extends Controller
         $user = Auth::user();
 
         if ($user->role === User::ROLE_DOKTER) {
-            return redirect()->route('dashboard.doctor');
+            return redirect()->route('doctor.dashboard');
         }
 
         if ($user->role === User::ROLE_PERAWAT_UK) {
-            return redirect()->route('dashboard.nurse.uk');
+            return redirect()->route('uk.dashboard');
         }
 
-        return redirect()->route('dashboard.nurse.regular');
+        return redirect()->route('nurse-regular.dashboard');
     }
 
     public function doctor(): View

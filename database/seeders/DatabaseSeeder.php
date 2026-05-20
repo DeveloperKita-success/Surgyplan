@@ -22,7 +22,7 @@ class DatabaseSeeder extends Seeder
         $specialist = Specialist::firstOrCreate(['name' => 'Spesialis Bedah Umum']);
 
         $doctorUser = User::firstOrCreate(
-            ['email' => 'dokter@example.com'],
+            ['email' => 'dokter@gmail.com'],
             [
                 'name' => 'Dokter Demo',
                 'password' => Hash::make('password'),
@@ -41,9 +41,9 @@ class DatabaseSeeder extends Seeder
         );
 
         $ukNurseUser = User::firstOrCreate(
-            ['email' => 'perawat.OK@example.com'],
+            ['email' => 'perawat.uk@gmail.com'],
             [
-                'name' => 'Perawat OK Demo',
+                'name' => 'Perawat UK Demo',
                 'password' => Hash::make('password'),
                 'role' => User::ROLE_PERAWAT_UK,
             ]
@@ -58,7 +58,7 @@ class DatabaseSeeder extends Seeder
         );
 
         $regularNurseUser = User::firstOrCreate(
-            ['email' => 'perawat.biasa@example.com'],
+            ['email' => 'perawat.biasa@gmail.com'],
             [
                 'name' => 'Perawat Biasa Demo',
                 'password' => Hash::make('password'),
