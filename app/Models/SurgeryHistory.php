@@ -13,6 +13,7 @@ class SurgeryHistory extends Model
     public $timestamps = false;
 
     public const CREATED_AT = 'created_at';
+
     public const UPDATED_AT = null;
 
     protected $fillable = [
@@ -21,6 +22,10 @@ class SurgeryHistory extends Model
         'old_status',
         'new_status',
         'note',
+    ];
+
+    protected $casts = [
+        'created_at' => 'datetime',
     ];
 
     public function surgeryRequest(): BelongsTo

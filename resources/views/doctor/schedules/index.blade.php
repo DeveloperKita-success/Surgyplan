@@ -40,7 +40,7 @@
                         @forelse ($schedules as $schedule)
                             <tr>
                                 <td class="px-5 py-4 font-medium text-slate-900">{{ $schedule->patient->name }}</td>
-                                <td class="px-5 py-4 text-slate-600">{{ $schedule->surgeryRequest->procedure?->name ?? '-' }}</td>
+                                <td class="px-5 py-4 text-slate-600">{{ $schedule->surgeryRequest->procedure_text ?? '-' }}</td>
                                 <td class="px-5 py-4 text-slate-600">{{ $schedule->surgery_date?->format('d M Y') }}</td>
                                 <td class="px-5 py-4 text-slate-600">{{ $schedule->start_time }}</td>
                                 <td class="px-5 py-4 text-slate-600">{{ $schedule->operatingRoom->room_name }}</td>

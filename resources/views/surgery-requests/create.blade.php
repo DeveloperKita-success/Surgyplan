@@ -70,28 +70,14 @@
                 <h2 class="text-lg font-semibold text-slate-900">2. Diagnosis dan Tindakan Operasi</h2>
                 <div class="mt-5 grid gap-4 md:grid-cols-2">
                     <label class="space-y-2">
-                        <span class="text-sm font-medium text-slate-600">Kode Diagnosis ICD-10</span>
-                        <input name="diagnosis_code" value="{{ old('diagnosis_code') }}" class="w-full rounded-lg border-slate-200 text-sm focus:border-cyan-600 focus:ring-cyan-600">
+                        <span class="text-sm font-medium text-slate-600">Diagnosis ICD-10</span>
+                        <input name="diagnosis_text" value="{{ old('diagnosis_text') }}" class="w-full rounded-lg border-slate-200 text-sm focus:border-cyan-600 focus:ring-cyan-600" placeholder="Contoh: K35.8 - Appendicitis akut">
+                        @error('diagnosis_text') <span class="text-sm text-rose-600">{{ $message }}</span> @enderror
                     </label>
                     <label class="space-y-2">
-                        <span class="text-sm font-medium text-slate-600">Nama Diagnosis</span>
-                        <input name="diagnosis_name" value="{{ old('diagnosis_name') }}" class="w-full rounded-lg border-slate-200 text-sm focus:border-cyan-600 focus:ring-cyan-600">
-                    </label>
-                    <label class="space-y-2 md:col-span-2">
-                        <span class="text-sm font-medium text-slate-600">Keterangan Diagnosis</span>
-                        <textarea name="diagnosis_description" rows="2" class="w-full rounded-lg border-slate-200 text-sm focus:border-cyan-600 focus:ring-cyan-600">{{ old('diagnosis_description') }}</textarea>
-                    </label>
-                    <label class="space-y-2">
-                        <span class="text-sm font-medium text-slate-600">Kode Tindakan ICD-9 CM</span>
-                        <input name="procedure_code" value="{{ old('procedure_code') }}" class="w-full rounded-lg border-slate-200 text-sm focus:border-cyan-600 focus:ring-cyan-600">
-                    </label>
-                    <label class="space-y-2">
-                        <span class="text-sm font-medium text-slate-600">Nama Tindakan Operasi</span>
-                        <input name="procedure_name" value="{{ old('procedure_name') }}" class="w-full rounded-lg border-slate-200 text-sm focus:border-cyan-600 focus:ring-cyan-600">
-                    </label>
-                    <label class="space-y-2 md:col-span-2">
-                        <span class="text-sm font-medium text-slate-600">Keterangan Tindakan</span>
-                        <textarea name="procedure_description" rows="2" class="w-full rounded-lg border-slate-200 text-sm focus:border-cyan-600 focus:ring-cyan-600">{{ old('procedure_description') }}</textarea>
+                        <span class="text-sm font-medium text-slate-600">Tindakan ICD-9 CM</span>
+                        <input name="procedure_text" value="{{ old('procedure_text') }}" class="w-full rounded-lg border-slate-200 text-sm focus:border-cyan-600 focus:ring-cyan-600" placeholder="Contoh: 47.01 - Appendektomi">
+                        @error('procedure_text') <span class="text-sm text-rose-600">{{ $message }}</span> @enderror
                     </label>
                 </div>
             </section>

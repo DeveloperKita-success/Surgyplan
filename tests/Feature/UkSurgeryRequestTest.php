@@ -1,10 +1,8 @@
 <?php
 
-use App\Models\Diagnosis;
 use App\Models\Doctor;
 use App\Models\OperatingRoom;
 use App\Models\Patient;
-use App\Models\Procedure;
 use App\Models\Specialist;
 use App\Models\SurgeryRequest;
 use App\Models\User;
@@ -29,12 +27,10 @@ function createUkRequestFixture(): array
         'origin_room' => 'IGD',
         'created_by' => $regularNurse->id,
     ]);
-    $diagnosis = Diagnosis::create(['name' => 'Appendicitis']);
-    $procedure = Procedure::create(['name' => 'Appendektomi']);
     $request = SurgeryRequest::create([
         'patient_id' => $patient->id,
-        'diagnosis_id' => $diagnosis->id,
-        'procedure_id' => $procedure->id,
+        'diagnosis_text' => 'K35.8 - Appendicitis akut',
+        'procedure_text' => '47.01 - Appendektomi',
         'requested_by' => $regularNurse->id,
         'requested_doctor_id' => $doctor->id,
         'requested_date' => '2026-05-20',

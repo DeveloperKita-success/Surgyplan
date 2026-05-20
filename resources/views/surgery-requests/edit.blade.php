@@ -18,10 +18,8 @@
                         ['medical_record_number', 'No RM', $surgeryRequest->patient->medical_record_number],
                         ['patient_name', 'Nama Pasien', $surgeryRequest->patient->name],
                         ['age', 'Umur', $surgeryRequest->patient->age],
-                        ['diagnosis_code', 'Kode Diagnosis ICD-10', $surgeryRequest->diagnosis?->code],
-                        ['diagnosis_name', 'Nama Diagnosis', $surgeryRequest->diagnosis?->name],
-                        ['procedure_code', 'Kode Tindakan ICD-9 CM', $surgeryRequest->procedure?->code],
-                        ['procedure_name', 'Nama Tindakan', $surgeryRequest->procedure?->name],
+                        ['diagnosis_text', 'Diagnosis ICD-10', $surgeryRequest->diagnosis_text],
+                        ['procedure_text', 'Tindakan ICD-9 CM', $surgeryRequest->procedure_text],
                     ] as [$name, $label, $value])
                         <label class="space-y-2">
                             <span class="text-sm font-medium text-slate-600">{{ $label }}</span>

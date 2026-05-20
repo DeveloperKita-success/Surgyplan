@@ -41,7 +41,7 @@
                         @forelse ($requests as $request)
                             <tr>
                                 <td class="px-5 py-4 font-medium text-slate-900">{{ $request->patient->name }}</td>
-                                <td class="px-5 py-4 text-slate-600">{{ $request->procedure?->name ?? '-' }}</td>
+                                <td class="px-5 py-4 text-slate-600">{{ $request->procedure_text ?? '-' }}</td>
                                 <td class="px-5 py-4 text-slate-600">{{ $request->requestedDoctor?->user?->name ?? '-' }}</td>
                                 <td class="px-5 py-4 text-slate-600">{{ $request->requested_date?->format('d M Y') }}</td>
                                 <td class="px-5 py-4 text-slate-600">{{ ucfirst($request->request_status) }}</td>

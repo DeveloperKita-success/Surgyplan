@@ -17,7 +17,7 @@ class DoctorScheduleController extends Controller
         $allowedStatuses = ['scheduled', 'completed'];
 
         $schedules = $doctor->surgerySchedules()
-            ->with(['patient', 'operatingRoom', 'surgeryRequest.procedure'])
+            ->with(['patient', 'operatingRoom', 'surgeryRequest'])
             ->when(in_array($status, $allowedStatuses, true), function ($query) use ($status): void {
                 $query->where('schedule_status', $status);
             })
@@ -46,8 +46,7 @@ class DoctorScheduleController extends Controller
             'schedule' => $surgerySchedule->load([
                 'patient',
                 'operatingRoom',
-                'surgeryRequest.diagnosis',
-                'surgeryRequest.procedure',
+                'surgeryRequest',
                 'surgeryRequest.preoperativeChecklist',
                 'operationReports',
             ]),
@@ -61,7 +60,7 @@ class DoctorScheduleController extends Controller
         return view('doctor.reports.index', [
             'reports' => OperationReport::query()
                 ->where('doctor_id', $doctor->id)
-                ->with(['surgerySchedule.patient', 'surgerySchedule.surgeryRequest.procedure'])
+                ->with(['surgerySchedule.patient', 'surgerySchedule.surgeryRequest'])
                 ->latest()
                 ->paginate(10),
         ]);

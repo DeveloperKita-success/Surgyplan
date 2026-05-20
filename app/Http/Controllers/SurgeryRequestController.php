@@ -2,11 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Diagnosis;
 use App\Models\Doctor;
 use App\Models\Patient;
 use App\Models\PatientPreoperativeChecklist;
-use App\Models\Procedure;
 use App\Models\SurgeryHistory;
 use App\Models\SurgeryRequest;
 use App\Models\User;
@@ -38,7 +36,7 @@ class SurgeryRequestController extends Controller
 
         $requests = $request->user()
             ->surgeryRequests()
-            ->with(['patient', 'procedure', 'requestedDoctor.user'])
+            ->with(['patient', 'requestedDoctor.user'])
             ->when(in_array($status, $allowedStatuses, true), function ($query) use ($status): void {
                 $query->where('request_status', $status);
             })
@@ -65,8 +63,6 @@ class SurgeryRequestController extends Controller
         return view('surgery-requests.show', [
             'surgeryRequest' => $surgeryRequest->load([
                 'patient',
-                'diagnosis',
-                'procedure',
                 'requestedDoctor.user',
                 'preoperativeChecklist',
                 'surgeryHistories.changedBy',
@@ -81,8 +77,6 @@ class SurgeryRequestController extends Controller
         return view('surgery-requests.edit', [
             'surgeryRequest' => $surgeryRequest->load([
                 'patient',
-                'diagnosis',
-                'procedure',
                 'preoperativeChecklist',
             ]),
             'doctors' => Doctor::query()
@@ -105,12 +99,8 @@ class SurgeryRequestController extends Controller
             'origin_room' => ['required', 'in:IGD,Bangsal,Poli'],
             'address' => ['nullable', 'string'],
             'phone' => ['nullable', 'string', 'max:255'],
-            'diagnosis_code' => ['nullable', 'string', 'max:255'],
-            'diagnosis_name' => ['required', 'string', 'max:255'],
-            'diagnosis_description' => ['nullable', 'string'],
-            'procedure_code' => ['nullable', 'string', 'max:255'],
-            'procedure_name' => ['required', 'string', 'max:255'],
-            'procedure_description' => ['nullable', 'string'],
+            'diagnosis_text' => ['required', 'string', 'max:255'],
+            'procedure_text' => ['required', 'string', 'max:255'],
             'patient_priority' => ['required', 'in:imminent,cito,urgent,expedited,elektif'],
             'requested_date' => ['required', 'date'],
             'requested_start_time' => ['required', 'date_format:H:i'],
@@ -158,22 +148,10 @@ class SurgeryRequestController extends Controller
                 'created_by' => $request->user()->id,
             ]);
 
-            $diagnosis = Diagnosis::create([
-                'code' => $validated['diagnosis_code'] ?? null,
-                'name' => $validated['diagnosis_name'],
-                'description' => $validated['diagnosis_description'] ?? null,
-            ]);
-
-            $procedure = Procedure::create([
-                'code' => $validated['procedure_code'] ?? null,
-                'name' => $validated['procedure_name'],
-                'description' => $validated['procedure_description'] ?? null,
-            ]);
-
             $surgeryRequest = SurgeryRequest::create([
                 'patient_id' => $patient->id,
-                'diagnosis_id' => $diagnosis->id,
-                'procedure_id' => $procedure->id,
+                'diagnosis_text' => $validated['diagnosis_text'],
+                'procedure_text' => $validated['procedure_text'],
                 'requested_by' => $request->user()->id,
                 'requested_doctor_id' => $validated['requested_doctor_id'],
                 'requested_date' => $validated['requested_date'],
@@ -246,19 +224,9 @@ class SurgeryRequestController extends Controller
                 'phone' => $validated['phone'] ?? null,
             ]);
 
-            $surgeryRequest->diagnosis?->update([
-                'code' => $validated['diagnosis_code'] ?? null,
-                'name' => $validated['diagnosis_name'],
-                'description' => $validated['diagnosis_description'] ?? null,
-            ]);
-
-            $surgeryRequest->procedure?->update([
-                'code' => $validated['procedure_code'] ?? null,
-                'name' => $validated['procedure_name'],
-                'description' => $validated['procedure_description'] ?? null,
-            ]);
-
             $surgeryRequest->update([
+                'diagnosis_text' => $validated['diagnosis_text'],
+                'procedure_text' => $validated['procedure_text'],
                 'requested_doctor_id' => $validated['requested_doctor_id'],
                 'requested_date' => $validated['requested_date'],
                 'requested_start_time' => $validated['requested_start_time'],
@@ -330,12 +298,8 @@ class SurgeryRequestController extends Controller
             'origin_room' => ['required', 'in:IGD,Bangsal,Poli'],
             'address' => ['nullable', 'string'],
             'phone' => ['nullable', 'string', 'max:255'],
-            'diagnosis_code' => ['nullable', 'string', 'max:255'],
-            'diagnosis_name' => ['required', 'string', 'max:255'],
-            'diagnosis_description' => ['nullable', 'string'],
-            'procedure_code' => ['nullable', 'string', 'max:255'],
-            'procedure_name' => ['required', 'string', 'max:255'],
-            'procedure_description' => ['nullable', 'string'],
+            'diagnosis_text' => ['required', 'string', 'max:255'],
+            'procedure_text' => ['required', 'string', 'max:255'],
             'patient_priority' => ['required', 'in:imminent,cito,urgent,expedited,elektif'],
             'requested_date' => ['required', 'date'],
             'requested_start_time' => ['required', 'date_format:H:i'],

@@ -22,7 +22,7 @@ class UkSurgeryRequestController extends Controller
         $allowedStatuses = ['menunggu', 'disetujui', 'ditolak', 'ditunda'];
 
         $requests = SurgeryRequest::query()
-            ->with(['patient', 'procedure', 'requestedDoctor.user'])
+            ->with(['patient', 'requestedDoctor.user'])
             ->when(in_array($status, $allowedStatuses, true), function ($query) use ($status): void {
                 $query->where('request_status', $status);
             })
@@ -50,8 +50,6 @@ class UkSurgeryRequestController extends Controller
         return view('uk.requests.show', [
             'surgeryRequest' => $surgeryRequest->load([
                 'patient',
-                'diagnosis',
-                'procedure',
                 'requestedDoctor.user',
                 'preoperativeChecklist',
                 'ukVerificationChecklist',

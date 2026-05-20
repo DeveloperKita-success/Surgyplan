@@ -6,7 +6,6 @@ use App\Http\Requests\StoreRoomOperationRequest;
 use App\Models\Doctor;
 use App\Models\Guideline;
 use App\Models\Patient;
-use App\Models\PatientPreoperativeChecklist;
 use App\Models\SurgeryRequest;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
@@ -89,7 +88,7 @@ class RoomOperationRequestController extends Controller
                 'requested_start_time' => $data['requested_start_time'],
                 'requested_end_time' => $data['requested_end_time'],
                 'patient_priority' => $data['patient_priority'],
-                'request_status' => 'Diajukan',
+                'request_status' => 'menunggu',
                 'notes' => $data['final_note'] ?? null,
             ]);
 
@@ -102,22 +101,22 @@ class RoomOperationRequestController extends Controller
                 'lab_result_file' => $this->storeUploadedFile('lab_result_file'),
                 'radiology_available' => (bool) $data['radiology_available'],
                 'radiology_file' => $this->storeUploadedFile('radiology_file'),
-                'anesthesia_consultation_done' => $data['anesthesia_consultation_done'] ?? null,
+                'anesthesia_consultation_done' => isset($data['anesthesia_consultation_done']),
                 'anesthesia_risk_estimation' => $data['anesthesia_risk_estimation'],
-                'vital_sign_stable' => $data['vital_sign_stable'],
+                'vital_sign_stable' => $data['vital_sign_stable'] === 'Stabil',
                 'vital_sign_note' => $data['vital_sign_stable'] === 'Stabil' ? ($data['vital_sign_note'] ?? null) : null,
                 'blood_pressure' => $data['blood_pressure'],
                 'allergy' => $data['allergy'] ?? null,
-                'fasting_more_than_6_hours' => $data['fasting_more_than_6_hours'],
+                'fasting_more_than_6_hours' => $data['fasting_more_than_6_hours'] === 'Lebih dari 6 jam',
                 'blood_type' => $data['blood_type'],
-                'blood_available' => $data['blood_available'],
-                'infusion_installed' => $data['infusion_installed'],
-                'catheter_installed' => $data['catheter_installed'],
-                'surgical_area_shaved' => $data['surgical_area_shaved'],
-                'jewelry_removed' => $data['jewelry_removed'],
+                'blood_available' => $data['blood_available'] === 'Tersedia',
+                'infusion_installed' => $data['infusion_installed'] === 'Terpasang',
+                'catheter_installed' => $data['catheter_installed'] === 'Terpasang',
+                'surgical_area_shaved' => $data['surgical_area_shaved'] === 'Sudah dilakukan',
+                'jewelry_removed' => $data['jewelry_removed'] === 'Terlepas',
                 'disease_history' => $data['disease_history'] ?? null,
                 'current_medications' => $data['current_medications'] ?? null,
-                'has_previous_surgery' => $data['has_previous_surgery'] ?? null,
+                'has_previous_surgery' => isset($data['has_previous_surgery']),
                 'previous_surgery_note' => $data['previous_surgery_note'] ?? null,
                 'previous_surgery_date' => $data['previous_surgery_date'] ?? null,
                 'final_note' => $data['final_note'] ?? null,

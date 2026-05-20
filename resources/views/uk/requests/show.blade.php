@@ -19,8 +19,8 @@
                 <dl class="mt-5 grid gap-4 text-sm sm:grid-cols-2">
                     <div><dt class="text-slate-500">No RM</dt><dd class="font-semibold">{{ $surgeryRequest->patient->medical_record_number }}</dd></div>
                     <div><dt class="text-slate-500">Ruang Asal</dt><dd class="font-semibold">{{ $surgeryRequest->patient->origin_room }}</dd></div>
-                    <div><dt class="text-slate-500">Diagnosis</dt><dd class="font-semibold">{{ $surgeryRequest->diagnosis?->name ?? '-' }}</dd></div>
-                    <div><dt class="text-slate-500">Tindakan</dt><dd class="font-semibold">{{ $surgeryRequest->procedure?->name ?? '-' }}</dd></div>
+                    <div><dt class="text-slate-500">Diagnosis</dt><dd class="font-semibold">{{ $surgeryRequest->diagnosis_text ?? '-' }}</dd></div>
+                    <div><dt class="text-slate-500">Tindakan</dt><dd class="font-semibold">{{ $surgeryRequest->procedure_text ?? '-' }}</dd></div>
                 </dl>
             </div>
             <div class="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">

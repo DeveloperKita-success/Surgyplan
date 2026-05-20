@@ -40,8 +40,8 @@
             <div class="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
                 <h2 class="text-lg font-semibold">Rencana Operasi</h2>
                 <dl class="mt-5 grid gap-4 text-sm sm:grid-cols-2">
-                    <div><dt class="text-slate-500">Diagnosis</dt><dd class="font-semibold text-slate-900">{{ $surgeryRequest->diagnosis?->name ?? '-' }}</dd></div>
-                    <div><dt class="text-slate-500">Tindakan</dt><dd class="font-semibold text-slate-900">{{ $surgeryRequest->procedure?->name ?? '-' }}</dd></div>
+                    <div><dt class="text-slate-500">Diagnosis</dt><dd class="font-semibold text-slate-900">{{ $surgeryRequest->diagnosis_text ?? '-' }}</dd></div>
+                    <div><dt class="text-slate-500">Tindakan</dt><dd class="font-semibold text-slate-900">{{ $surgeryRequest->procedure_text ?? '-' }}</dd></div>
                     <div><dt class="text-slate-500">Dokter</dt><dd class="font-semibold text-slate-900">{{ $surgeryRequest->requestedDoctor?->user?->name ?? '-' }}</dd></div>
                     <div><dt class="text-slate-500">Status Pasien</dt><dd class="font-semibold text-slate-900">{{ ucfirst($surgeryRequest->patient_priority) }}</dd></div>
                     <div><dt class="text-slate-500">Tanggal</dt><dd class="font-semibold text-slate-900">{{ $surgeryRequest->requested_date?->format('d M Y') }}</dd></div>
@@ -57,7 +57,7 @@
                     <div class="rounded-lg bg-slate-50 p-4 text-sm">
                         <p class="font-semibold text-slate-900">{{ $history->note }}</p>
                         <p class="mt-1 text-slate-500">
-                            {{ $history->changedBy->name }} · {{ $history->created_at?->format('d M Y H:i') }}
+                            {{ $history->changedBy->name }} - {{ $history->created_at?->format('d M Y H:i') }}
                         </p>
                     </div>
                 @empty

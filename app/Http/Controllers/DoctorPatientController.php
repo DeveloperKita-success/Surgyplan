@@ -15,7 +15,7 @@ class DoctorPatientController extends Controller
             'schedules' => $request->user()
                 ->doctor
                 ->surgerySchedules()
-                ->with(['patient', 'surgeryRequest.procedure'])
+                ->with(['patient', 'surgeryRequest'])
                 ->latest('surgery_date')
                 ->paginate(10),
         ]);

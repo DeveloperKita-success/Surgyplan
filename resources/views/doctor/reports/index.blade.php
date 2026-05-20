@@ -21,7 +21,7 @@
                     @forelse ($reports as $report)
                         <tr>
                             <td class="px-5 py-4 font-medium text-slate-900">{{ $report->surgerySchedule->patient->name }}</td>
-                            <td class="px-5 py-4 text-slate-600">{{ $report->surgerySchedule->surgeryRequest->procedure?->name ?? '-' }}</td>
+                            <td class="px-5 py-4 text-slate-600">{{ $report->surgerySchedule->surgeryRequest->procedure_text ?? '-' }}</td>
                             <td class="px-5 py-4 text-slate-600">{{ ucfirst($report->status) }}</td>
                             <td class="px-5 py-4 text-slate-600">{{ $report->operation_result ?? '-' }}</td>
                         </tr>
