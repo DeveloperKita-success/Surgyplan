@@ -1,7 +1,7 @@
 @php
     $items = [
         ['label' => 'Dashboard', 'icon' => 'dashboard', 'route' => 'doctor.dashboard', 'active' => 'doctor.dashboard'],
-        ['label' => 'Data Pasien', 'icon' => 'user', 'route' => 'doctor.patients.index', 'active' => 'doctor.patients.*'],
+        ['label' => 'Data Patient', 'icon' => 'user', 'route' => 'patients.index', 'active' => 'patients.*'],
         ['label' => 'Jadwal Operasi', 'icon' => 'calendar', 'route' => 'doctor.schedules.index', 'active' => 'doctor.schedules.*'],
         ['label' => 'Laporan Operasi', 'icon' => 'report', 'route' => 'doctor.reports.index', 'active' => 'doctor.reports.*'],
         ['label' => 'Buku Pedoman', 'icon' => 'book', 'route' => 'guidelines.index', 'active' => 'guidelines.*'],

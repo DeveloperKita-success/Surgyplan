@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class UpdatePatientRequest extends FormRequest
+class StorePatientRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -14,15 +14,8 @@ class UpdatePatientRequest extends FormRequest
 
     public function rules(): array
     {
-        $patient = $this->route('patient');
-
         return [
-            'medical_record_number' => [
-                'required',
-                'string',
-                'max:50',
-                Rule::unique('patients', 'medical_record_number')->ignore($patient),
-            ],
+            'medical_record_number' => ['required', 'string', 'max:50', Rule::unique('patients', 'medical_record_number')],
             'name' => ['required', 'string', 'max:255'],
             'birth_date' => ['nullable', 'date'],
             'age' => ['nullable', 'integer', 'min:0', 'max:130'],

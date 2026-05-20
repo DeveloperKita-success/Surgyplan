@@ -2,21 +2,35 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StorePatientRequest;
 use App\Http\Requests\UpdatePatientRequest;
 use App\Models\Patient;
 use App\Models\SurgeryRequest;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
 class PatientController extends Controller
 {
     private function abortUnlessAllowedRole(): void
     {
-        /** @var User|null $user */
-        $user = auth()->user();
+        $user = $this->currentUser();
 
         abort_unless($user && in_array($user->role, [User::ROLE_DOKTER, User::ROLE_PERAWAT_BIASA, User::ROLE_PERAWAT_UK], true), 403);
+    }
+
+    private function abortUnlessRegularNurse(): void
+    {
+        abort_unless($this->currentUser()?->isRegularNurse(), 403);
+    }
+
+    private function currentUser(): ?User
+    {
+        /** @var User|null $user */
+        $user = Auth::user();
+
+        return $user;
     }
 
     public function index(): View
@@ -60,6 +74,7 @@ class PatientController extends Controller
             'gender' => $gender,
             'lastStatus' => $lastStatus,
             'statusOptions' => $statusOptions,
+            'canManagePatients' => $this->currentUser()?->isRegularNurse() ?? false,
         ]);
     }
 
@@ -76,12 +91,34 @@ class PatientController extends Controller
 
         return view('data_pasients.show', [
             'patient' => $patient,
+            'canManagePatients' => $this->currentUser()?->isRegularNurse() ?? false,
         ]);
+    }
+
+    public function create(): View
+    {
+        $this->abortUnlessRegularNurse();
+
+        return view('data_pasients.create');
+    }
+
+    public function store(StorePatientRequest $request): RedirectResponse
+    {
+        $this->abortUnlessRegularNurse();
+
+        $patient = Patient::create([
+            ...$request->validated(),
+            'created_by' => $this->currentUser()?->id,
+        ]);
+
+        return redirect()
+            ->route('patients.show', $patient)
+            ->with('status', 'Data patient berhasil dibuat.');
     }
 
     public function edit(Patient $patient): View
     {
-        $this->abortUnlessAllowedRole();
+        $this->abortUnlessRegularNurse();
 
         return view('data_pasients.edit', [
             'patient' => $patient,
@@ -90,7 +127,7 @@ class PatientController extends Controller
 
     public function update(UpdatePatientRequest $request, Patient $patient): RedirectResponse
     {
-        $this->abortUnlessAllowedRole();
+        $this->abortUnlessRegularNurse();
 
         $data = $request->validated();
 
@@ -105,7 +142,7 @@ class PatientController extends Controller
 
     public function destroy(Patient $patient): RedirectResponse
     {
-        $this->abortUnlessAllowedRole();
+        $this->abortUnlessRegularNurse();
 
         if ($patient->surgeryRequests()->exists()) {
             return redirect()
