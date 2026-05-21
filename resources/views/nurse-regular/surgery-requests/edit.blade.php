@@ -14,18 +14,80 @@
             <section class="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
                 <h2 class="text-lg font-semibold">Data Utama</h2>
                 <div class="mt-5 grid gap-4 md:grid-cols-2">
-                    @foreach ([
-                        ['medical_record_number', 'No RM', $surgeryRequest->patient->medical_record_number],
-                        ['patient_name', 'Nama Pasien', $surgeryRequest->patient->name],
-                        ['age', 'Umur', $surgeryRequest->patient->age],
-                        ['diagnosis_text', 'Diagnosis ICD-10', $surgeryRequest->diagnosis_text],
-                        ['procedure_text', 'Tindakan ICD-9 CM', $surgeryRequest->procedure_text],
-                    ] as [$name, $label, $value])
-                        <label class="space-y-2">
-                            <span class="text-sm font-medium text-slate-600">{{ $label }}</span>
-                            <input name="{{ $name }}" value="{{ old($name, $value) }}" class="w-full rounded-lg border-slate-200 text-sm focus:border-cyan-600 focus:ring-cyan-600">
-                        </label>
-                    @endforeach
+                    <label class="space-y-2">
+                        <span class="text-sm font-medium text-slate-600">No RM</span>
+                        <input name="medical_record_number" value="{{ old('medical_record_number', $surgeryRequest->patient->medical_record_number) }}" class="w-full rounded-lg border-slate-200 text-sm focus:border-cyan-600 focus:ring-cyan-600">
+                    </label>
+                    <label class="space-y-2">
+                        <span class="text-sm font-medium text-slate-600">Nama Pasien</span>
+                        <input name="patient_name" value="{{ old('patient_name', $surgeryRequest->patient->name) }}" class="w-full rounded-lg border-slate-200 text-sm focus:border-cyan-600 focus:ring-cyan-600">
+                    </label>
+                    <label class="space-y-2">
+                        <span class="text-sm font-medium text-slate-600">Umur</span>
+                        <input name="age" value="{{ old('age', $surgeryRequest->patient->age) }}" class="w-full rounded-lg border-slate-200 text-sm focus:border-cyan-600 focus:ring-cyan-600">
+                    </label>
+                    <label class="space-y-2" x-data="icdAutocomplete('icd10')">
+                        <span class="text-sm font-medium text-slate-600">Diagnosis ICD-10</span>
+                        <div class="relative">
+                            <input type="text" name="diagnosis_text" x-model="query"
+                                x-on:input.debounce.300ms="search"
+                                x-on:blur="handleBlur"
+                                x-on:keydown.down.prevent="nextItem"
+                                x-on:keydown.up.prevent="prevItem"
+                                x-on:keydown.enter.prevent="selectItem"
+                                x-on:keydown.escape="open = false"
+                                value="{{ old('diagnosis_text', $surgeryRequest->diagnosis_text) }}"
+                                class="w-full rounded-lg border-slate-200 text-sm focus:border-cyan-600 focus:ring-cyan-600"
+                                placeholder="Ketik diagnosis atau kode ICD-10..."
+                                autocomplete="off">
+                            <div x-show="open && results.length > 0"
+                                x-transition x-cloak
+                                class="absolute z-50 mt-1 w-full rounded-lg border border-slate-200 bg-white shadow-lg">
+                                <template x-for="(item, idx) in results" :key="idx">
+                                    <button type="button"
+                                        x-on:click="selectItem(idx)"
+                                        x-on:mousemove="hovered = idx"
+                                        class="w-full px-4 py-2 text-left text-sm transition"
+                                        :class="idx === hovered ? 'bg-cyan-50 text-cyan-800' : 'text-slate-700 hover:bg-slate-50'">
+                                        <span class="font-semibold" x-text="item.code"></span>
+                                        <span class="ml-2" x-text="item.name"></span>
+                                    </button>
+                                </template>
+                            </div>
+                        </div>
+                        @error('diagnosis_text') <span class="text-sm text-rose-600">{{ $message }}</span> @enderror
+                    </label>
+                    <label class="space-y-2" x-data="icdAutocomplete('icd9')">
+                        <span class="text-sm font-medium text-slate-600">Tindakan ICD-9 CM</span>
+                        <div class="relative">
+                            <input type="text" name="procedure_text" x-model="query"
+                                x-on:input.debounce.300ms="search"
+                                x-on:blur="handleBlur"
+                                x-on:keydown.down.prevent="nextItem"
+                                x-on:keydown.up.prevent="prevItem"
+                                x-on:keydown.enter.prevent="selectItem"
+                                x-on:keydown.escape="open = false"
+                                value="{{ old('procedure_text', $surgeryRequest->procedure_text) }}"
+                                class="w-full rounded-lg border-slate-200 text-sm focus:border-cyan-600 focus:ring-cyan-600"
+                                placeholder="Ketik tindakan atau kode ICD-9-CM..."
+                                autocomplete="off">
+                            <div x-show="open && results.length > 0"
+                                x-transition x-cloak
+                                class="absolute z-50 mt-1 w-full rounded-lg border border-slate-200 bg-white shadow-lg">
+                                <template x-for="(item, idx) in results" :key="idx">
+                                    <button type="button"
+                                        x-on:click="selectItem(idx)"
+                                        x-on:mousemove="hovered = idx"
+                                        class="w-full px-4 py-2 text-left text-sm transition"
+                                        :class="idx === hovered ? 'bg-cyan-50 text-cyan-800' : 'text-slate-700 hover:bg-slate-50'">
+                                        <span class="font-semibold" x-text="item.code"></span>
+                                        <span class="ml-2" x-text="item.name"></span>
+                                    </button>
+                                </template>
+                            </div>
+                        </div>
+                        @error('procedure_text') <span class="text-sm text-rose-600">{{ $message }}</span> @enderror
+                    </label>
                     <label class="space-y-2">
                         <span class="text-sm font-medium text-slate-600">Tanggal Lahir</span>
                         <input type="date" name="birth_date" value="{{ old('birth_date', $surgeryRequest->patient->birth_date?->format('Y-m-d')) }}" class="w-full rounded-lg border-slate-200 text-sm focus:border-cyan-600 focus:ring-cyan-600">
@@ -85,6 +147,10 @@
                     <label class="space-y-2">
                         <span class="text-sm font-medium text-slate-600">Jam Operasi</span>
                         <input type="time" name="requested_start_time" value="{{ old('requested_start_time', $surgeryRequest->requested_start_time) }}" class="w-full rounded-lg border-slate-200 text-sm focus:border-cyan-600 focus:ring-cyan-600">
+                    </label>
+                    <label class="space-y-2">
+                        <span class="text-sm font-medium text-slate-600">Estimasi Resiko</span>
+                        <input name="risk_estimation" value="{{ old('risk_estimation', $surgeryRequest->risk_estimation) }}" class="w-full rounded-lg border-slate-200 text-sm focus:border-cyan-600 focus:ring-cyan-600" placeholder="Contoh: ASA II, risiko sedang">
                     </label>
                     <label class="space-y-2 md:col-span-2">
                         <span class="text-sm font-medium text-slate-600">Catatan Pengajuan</span>

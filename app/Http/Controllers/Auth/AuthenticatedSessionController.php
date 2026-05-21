@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -28,9 +29,17 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        $request->user()?->loadMissing(['doctor', 'nurse']);
+        /** @var User $user */
+        $user = $request->user();
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        $destination = match ($user->role) {
+            User::ROLE_DOKTER => route('doctor.dashboard', absolute: false),
+            User::ROLE_PERAWAT_UK => route('uk.dashboard', absolute: false),
+            User::ROLE_ADMIN => route('admin.dashboard', absolute: false),
+            default => route('nurse-regular.dashboard', absolute: false),
+        };
+
+        return redirect()->to($destination);
     }
 
     /**

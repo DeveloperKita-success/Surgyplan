@@ -46,6 +46,7 @@
                     <div><dt class="text-slate-500">Status Pasien</dt><dd class="font-semibold text-slate-900">{{ ucfirst($surgeryRequest->patient_priority) }}</dd></div>
                     <div><dt class="text-slate-500">Tanggal</dt><dd class="font-semibold text-slate-900">{{ $surgeryRequest->requested_date?->format('d M Y') }}</dd></div>
                     <div><dt class="text-slate-500">Jam</dt><dd class="font-semibold text-slate-900">{{ $surgeryRequest->requested_start_time }}</dd></div>
+                    <div class="sm:col-span-2"><dt class="text-slate-500">Estimasi Resiko</dt><dd class="font-semibold text-slate-900">{{ $surgeryRequest->risk_estimation ?? '-' }}</dd></div>
                 </dl>
             </div>
         </section>
