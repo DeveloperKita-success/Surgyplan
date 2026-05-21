@@ -13,6 +13,13 @@ use App\Http\Controllers\NurseUk\OperationScheduleController as NurseUkOperation
 use App\Http\Controllers\NurseUk\PatientController as NurseUkPatientController;
 use App\Http\Controllers\NurseUk\SurgeryRequestController as NurseUkSurgeryRequestController;
 use App\Http\Controllers\ProfileController as UserProfileController;
+use App\Http\Controllers\DashboardController ; 
+use App\Http\Controllers\AdminUserController;
+use App\Http\Controllers\AdminSpecialistController;
+use App\Http\Controllers\IcdApiController;
+use App\Http\Controllers\PatientController;
+
+
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -28,6 +35,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/doctor', [MainDashboardController::class, 'doctor'])->middleware('doctor')->name('doctor');
         Route::get('/nurse-uk', [MainDashboardController::class, 'nurseUk'])->middleware('nurse-uk')->name('nurse.uk');
         Route::get('/nurse-regular', [MainDashboardController::class, 'nurseRegular'])->middleware('nurse-regular')->name('nurse.regular');
+         Route::get('/admin', [DashboardController::class, 'admin'])->name('admin');
     });
 
     Route::prefix('doctor')->name('doctor.')->middleware('doctor')->group(function (): void {
@@ -60,7 +68,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ->names('surgery-requests');
     });
 
-    Route::resource('guidelines', GuidelineFileController::class)->only(['index', 'store', 'destroy']);
+    Route::prefix('admin')->name('admin.')->group(function (): void {
+        Route::get('/dashboard', [DashboardController::class, 'admin'])->name('dashboard');
+        Route::get('/online-count', [DashboardController::class, 'adminOnlineCount'])->name('online-count');
+        Route::resource('/users', AdminUserController::class)->except(['index']);
+        Route::get('/users', [AdminUserController::class, 'index'])->name('users.index');
+        Route::resource('/specialists', AdminSpecialistController::class)->parameters(['specialists' => 'specialist']);
+    });
+
+    Route::resource('patients', PatientController::class);
+
+    Route::get('/api/icd/search', [IcdApiController::class, 'search'])->name('api.icd.search');
+
+    // Route::resource('guidelines', GuidelineController::class)->only(['index', 'store', 'destroy']);
 });
 
 Route::middleware('auth')->group(function () {

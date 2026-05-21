@@ -28,8 +28,25 @@
                 </div>
             </div>
 
+            <!-- Date & Time -->
+            <div class="hidden items-center gap-3 rounded-xl border border-green-100 bg-white/70 px-4 py-2 text-sm text-slate-700 shadow-sm ring-1 ring-white/40 backdrop-blur sm:flex">
+                <div class="flex items-center gap-2">
+                    <svg class="h-4 w-4 text-emerald-600" viewBox="0 0 24 24" fill="none">
+                        <path d="M8 2v3M16 2v3M4 10h16M6 5h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span class="font-semibold">{{ now()->translatedFormat('l, d F Y') }}</span>
+                </div>
+                <span class="h-5 w-px bg-slate-200"></span>
+                <div class="flex items-center gap-2">
+                    <svg class="h-4 w-4 text-emerald-600" viewBox="0 0 24 24" fill="none">
+                        <path d="M12 6v6l4 2M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span class="font-semibold">{{ now()->format('H:i') }}</span>
+                </div>
+            </div>
+
             <!-- Settings Dropdown -->
-            <div class="hidden sm:flex sm:items-center sm:ms-6">
+            <div class="hidden sm:flex sm:items-center sm:ms-4">
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
                         <button

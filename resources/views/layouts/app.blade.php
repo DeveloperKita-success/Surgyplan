@@ -21,7 +21,6 @@
         <div class="absolute -right-32 top-10 h-[28rem] w-[28rem] rounded-full bg-emerald-200/40 blur-3xl"></div>
         <div class="absolute left-1/2 top-24 h-56 w-56 -translate-x-1/2 rounded-full bg-green-200/30 blur-3xl"></div>
         <div class="absolute -bottom-40 left-10 h-[32rem] w-[32rem] rounded-[6rem] bg-white/30 blur-3xl"></div>
-
         <div class="absolute left-12 top-16 h-24 w-24 rounded-full border border-emerald-900/10"></div>
         <div class="absolute right-24 top-36 h-40 w-40 rounded-full border border-emerald-900/10"></div>
     </div>
@@ -31,6 +30,7 @@
             \App\Models\User::ROLE_DOKTER => 'Dokter',
             \App\Models\User::ROLE_PERAWAT_UK => 'Perawat OK',
             \App\Models\User::ROLE_PERAWAT_BIASA => 'Perawat Reguler',
+            \App\Models\User::ROLE_ADMIN => 'Admin',
             default => 'Pengguna',
         };
 
@@ -38,6 +38,7 @@
             \App\Models\User::ROLE_DOKTER => 'layouts.sidebars.doctor',
             \App\Models\User::ROLE_PERAWAT_UK => 'layouts.sidebars.nurse-uk',
             \App\Models\User::ROLE_PERAWAT_BIASA => 'layouts.sidebars.nurse-regular',
+            \App\Models\User::ROLE_ADMIN => 'layouts.sidebars.admin',
             default => null,
         };
     @endphp
@@ -69,19 +70,12 @@
                 <div class="flex items-center gap-3 px-2 py-2">
                     <div
                         class="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-white/15 shadow-md ring-1 ring-white/15">
-                        <img src="{{ asset('image/splash.png') }}" alt="Logo SurgyPlan"
-                            class="h-8 w-8 object-contain" />
+                        <img src="{{ asset('image/splash.png') }}" alt="Logo SurgyPlan" class="h-8 w-8 object-contain" />
                     </div>
                     <div class="min-w-0">
                         <p class="truncate text-base font-bold tracking-tight text-white">SurgyPlan</p>
                         <p class="truncate text-xs font-medium text-green-100/90">Hospital Dashboard</p>
                     </div>
-                </div>
-
-                <div class="mt-3 flex-1 overflow-y-auto px-1 pb-2">
-                    @if ($sidebarView)
-                        @include($sidebarView)
-                    @endif
                 </div>
 
                 <div class="mt-3 rounded-2xl bg-white/10 p-3 backdrop-blur-md ring-1 ring-white/15">
@@ -102,6 +96,12 @@
                         </form>
                     </div>
                 </div>
+
+                @if ($sidebarView)
+                    <div class="min-h-0 flex-1 overflow-y-auto pr-1 pt-4">
+                        @include($sidebarView)
+                    </div>
+                @endif
             </div>
         </aside>
 

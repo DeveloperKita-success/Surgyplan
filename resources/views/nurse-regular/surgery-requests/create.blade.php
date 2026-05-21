@@ -124,7 +124,7 @@
                             </label>
 
                             <label class="space-y-2 md:col-span-2 xl:col-span-3">
-                                <span class="text-sm font-semibold text-slate-700">Dokter Tujuan</span>
+                                <span class="text-sm font-semibold text-slate-700">Dokter Penanggung Jawab</span>
                                 <select name="requested_doctor_id"
                                     class="w-full rounded-[10px] border-slate-200 text-sm focus:border-cyan-600 focus:ring-cyan-600">
                                     <option value="">Pilih dokter (opsional)</option>
@@ -171,7 +171,7 @@
                                 </label>
 
                                 <label class="space-y-2">
-                                    <span class="text-sm font-semibold text-slate-700">Waktu Mulai</span>
+                                    <span class="text-sm font-semibold text-slate-700">Waktu</span>
                                     <input type="time" name="requested_start_time"
                                         value="{{ old('requested_start_time') }}"
                                         class="w-full rounded-[10px] border-slate-200 text-sm focus:border-cyan-600 focus:ring-cyan-600">
@@ -180,15 +180,7 @@
                                     @enderror
                                 </label>
 
-                                <label class="space-y-2">
-                                    <span class="text-sm font-semibold text-slate-700">Waktu Selesai</span>
-                                    <input type="time" name="requested_end_time"
-                                        value="{{ old('requested_end_time') }}"
-                                        class="w-full rounded-[10px] border-slate-200 text-sm focus:border-cyan-600 focus:ring-cyan-600">
-                                    @error('requested_end_time')
-                                        <p class="text-xs text-rose-600">{{ $message }}</p>
-                                    @enderror
-                                </label>
+                                
                             </div>
 
                         </div>
@@ -201,76 +193,77 @@
                                 gunakan pedoman sebagai referensi.</p>
                         </div>
 
-                        <div class="mt-6 grid gap-4 lg:grid-cols-[1.2fr_1fr]">
+                        <div class="mt-6 grid gap-4">
                             <div class="grid gap-4">
-                                <label class="space-y-2">
-                                    <span class="text-sm font-semibold text-slate-700">Diagnosa </span>
-                                    <input type="text" name="diagnosis_text" value="{{ old('diagnosis_text') }}"
-                                        class="w-full rounded-[10px] border-slate-200 text-sm focus:border-cyan-600 focus:ring-cyan-600"
-                                        placeholder="Contoh: K35.8 - Appendicitis akut">
+                                <label class="space-y-2" x-data="icdAutocomplete('icd10')">
+                                    <span class="text-sm font-semibold text-slate-700">Diagnosa (ICD-10)</span>
+                                    <div class="relative">
+                                        <input type="text" name="diagnosis_text" x-model="query"
+                                            x-on:input.debounce.300ms="search"
+                                            x-on:blur="handleBlur"
+                                            x-on:keydown.down.prevent="nextItem"
+                                            x-on:keydown.up.prevent="prevItem"
+                                            x-on:keydown.enter.prevent="selectItem"
+                                            x-on:keydown.escape="open = false"
+                                            value="{{ old('diagnosis_text') }}"
+                                            class="w-full rounded-[10px] border-slate-200 text-sm focus:border-cyan-600 focus:ring-cyan-600"
+                                            placeholder="Ketik diagnosis atau kode ICD-10..."
+                                            autocomplete="off">
+                                        <div x-show="open && results.length > 0"
+                                            x-transition
+                                            x-cloak
+                                            class="absolute z-50 mt-1 w-full rounded-xl border border-slate-200 bg-white shadow-lg">
+                                            <template x-for="(item, idx) in results" :key="idx">
+                                                <button type="button"
+                                                    x-on:click="selectItem(idx)"
+                                                    x-on:mousemove="hovered = idx"
+                                                    class="w-full px-4 py-2.5 text-left text-sm transition"
+                                                    :class="idx === hovered ? 'bg-cyan-50 text-cyan-800' : 'text-slate-700 hover:bg-slate-50'">
+                                                    <span class="font-semibold" x-text="item.code"></span>
+                                                    <span class="ml-2" x-text="item.name"></span>
+                                                </button>
+                                            </template>
+                                        </div>
+                                    </div>
                                     @error('diagnosis_text')
                                         <p class="text-xs text-rose-600">{{ $message }}</p>
                                     @enderror
                                 </label>
 
-                                <label class="space-y-2">
-                                    <span class="text-sm font-semibold text-slate-700">Tindakan </span>
-                                    <input type="text" name="procedure_text" value="{{ old('procedure_text') }}"
-                                        class="w-full rounded-[10px] border-slate-200 text-sm focus:border-cyan-600 focus:ring-cyan-600"
-                                        placeholder="Contoh: 47.01 - Appendektomi">
+                                <label class="space-y-2" x-data="icdAutocomplete('icd9')">
+                                    <span class="text-sm font-semibold text-slate-700">Tindakan (ICD-9-CM)</span>
+                                    <div class="relative">
+                                        <input type="text" name="procedure_text" x-model="query"
+                                            x-on:input.debounce.300ms="search"
+                                            x-on:blur="handleBlur"
+                                            x-on:keydown.down.prevent="nextItem"
+                                            x-on:keydown.up.prevent="prevItem"
+                                            x-on:keydown.enter.prevent="selectItem"
+                                            x-on:keydown.escape="open = false"
+                                            value="{{ old('procedure_text') }}"
+                                            class="w-full rounded-[10px] border-slate-200 text-sm focus:border-cyan-600 focus:ring-cyan-600"
+                                            placeholder="Ketik tindakan atau kode ICD-9-CM..."
+                                            autocomplete="off">
+                                        <div x-show="open && results.length > 0"
+                                            x-transition
+                                            x-cloak
+                                            class="absolute z-50 mt-1 w-full rounded-xl border border-slate-200 bg-white shadow-lg">
+                                            <template x-for="(item, idx) in results" :key="idx">
+                                                <button type="button"
+                                                    x-on:click="selectItem(idx)"
+                                                    x-on:mousemove="hovered = idx"
+                                                    class="w-full px-4 py-2.5 text-left text-sm transition"
+                                                    :class="idx === hovered ? 'bg-cyan-50 text-cyan-800' : 'text-slate-700 hover:bg-slate-50'">
+                                                    <span class="font-semibold" x-text="item.code"></span>
+                                                    <span class="ml-2" x-text="item.name"></span>
+                                                </button>
+                                            </template>
+                                        </div>
+                                    </div>
                                     @error('procedure_text')
                                         <p class="text-xs text-rose-600">{{ $message }}</p>
                                     @enderror
                                 </label>
-                            </div>
-
-                            <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                                <p class="text-sm font-semibold text-slate-700">Buku pedoman ICD</p>
-                                <p class="mt-1 text-xs text-slate-500">Gunakan dokumen ini jika perlu Bantuan.</p>
-
-                                <div class="mt-4 space-y-3 text-sm">
-                                    <div class="rounded-xl border border-slate-200 bg-white p-3">
-                                        <p class="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">
-                                            ICD-10</p>
-                                        <div class="mt-2 space-y-2">
-                                            @forelse ($icd10Guidelines as $guideline)
-                                                @if ($guideline->file)
-                                                    <a href="{{ Storage::url($guideline->file) }}" target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        class="flex items-center justify-between rounded-lg border border-cyan-200 bg-cyan-50 px-3 py-2 text-sm font-semibold text-cyan-700 hover:bg-cyan-100">
-                                                        <span>{{ $guideline->title }}</span>
-                                                        <span>PDF</span>
-                                                    </a>
-                                                @endif
-                                            @empty
-                                                <a href="{{ route('guidelines.index', ['type' => 'ICD-10']) }}"
-                                                    class="inline-flex items-center gap-2 text-sm font-semibold text-cyan-700 hover:text-cyan-800">Lihat
-                                                    pedoman ICD-10</a>
-                                            @endforelse
-                                        </div>
-                                    </div>
-
-                                    <div class="rounded-xl border border-slate-200 bg-white p-3">
-                                        <p class="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">
-                                            ICD-9</p>
-                                        <div class="mt-2 space-y-2">
-                                            @forelse ($icd9Guidelines as $guideline)
-                                                @if ($guideline->file)
-                                                    <a href="{{ Storage::url($guideline->file) }}" target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        class="flex items-center justify-between rounded-lg border border-cyan-200 bg-cyan-50 px-3 py-2 text-sm font-semibold text-cyan-700 hover:bg-cyan-100">
-                                                        <span>{{ $guideline->title }}</span>
-                                                        <span>PDF</span>
-                                                    </a>
-                                                @endif
-                                            @empty
-                                                <a href="{{ route('guidelines.index', ['type' => 'ICD-9']) }}"
-                                                    class="inline-flex items-center gap-2 text-sm font-semibold text-cyan-700 hover:text-cyan-800">Lihat
-                                                    pedoman ICD-9</a>
-                                            @endforelse
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </section>
@@ -450,11 +443,11 @@
                                 </div>
 
                                 <label class="space-y-2 rounded-2xl border border-slate-200 p-4">
-                                    <span class="text-sm font-semibold text-slate-700">Estimasi resiko anestesi</span>
+                                    <span class="text-sm font-semibold text-slate-700">Estimasi resiko</span>
                                     <input type="text" name="anesthesia_risk_estimation"
                                         value="{{ old('anesthesia_risk_estimation') }}"
                                         class="w-full rounded-[10px] border-slate-200 text-sm focus:border-cyan-600 focus:ring-cyan-600"
-                                        placeholder="Contoh: ASA II, risiko sedang">
+                                        placeholder="">
                                     @error('anesthesia_risk_estimation')
                                         <p class="text-xs text-rose-600">{{ $message }}</p>
                                     @enderror
@@ -539,10 +532,10 @@
 
                             <div class="grid gap-4">
                                 <label class="space-y-2">
-                                    <span class="text-sm font-semibold text-slate-700">Golongan darah</span>
+                                    <span class="text-sm font-semibold text-slate-700">Golongan darah dan rhesus</span>
                                     <input type="text" name="blood_type" value="{{ old('blood_type') }}"
                                         class="w-full rounded-[10px] border-slate-200 text-sm focus:border-cyan-600 focus:ring-cyan-600"
-                                        placeholder="A / B / AB / O">
+                                        placeholder="A / B / AB / O (Rh+/Rh-)">
                                     @error('blood_type')
                                         <p class="text-xs text-rose-600">{{ $message }}</p>
                                     @enderror
@@ -734,7 +727,7 @@
                             class="mt-0.5 h-6 w-6 rounded-full bg-cyan-100 text-center text-xs font-bold leading-6 text-cyan-700">1</span>Isi
                         No RM dan biodata pasien.</li>
                     <li class="flex gap-3"><span
-                            class="mt-0.5 h-6 w-6 rounded-full bg-cyan-100 text-center text-xs font-bold leading-6 text-cyan-700">2</span>Pilih
+                            class="mt-0.5 h-6 w-6 rounded-full bg-cyan-100 text-center text-xs font-bold leading-6 text-cyan-700">2</span>Isi
                         diagnosis ICD-10 dan tindakan ICD-9 CM.</li>
                     <li class="flex gap-3"><span
                             class="mt-0.5 h-6 w-6 rounded-full bg-cyan-100 text-center text-xs font-bold leading-6 text-cyan-700">3</span>Lengkapi

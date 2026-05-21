@@ -40,4 +40,7 @@
     @case('book')
         <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none"><path d="M5 4a2 2 0 0 1 2-2h12v18H7a2 2 0 0 0-2 2V4Zm0 0v16a2 2 0 0 1 2-2h12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         @break
+    @case('shield')
+        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none"><path d="M12 3 4 6v6c0 5 3.4 8.8 8 9 4.6-.2 8-4 8-9V6l-8-3Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+        @break
 @endswitch

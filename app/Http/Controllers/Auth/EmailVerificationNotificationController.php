@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use App\Models\User;
 
 class EmailVerificationNotificationController extends Controller
 {
@@ -14,7 +15,12 @@ class EmailVerificationNotificationController extends Controller
     public function store(Request $request): RedirectResponse
     {
         if ($request->user()->hasVerifiedEmail()) {
-            return redirect()->intended(route('dashboard', absolute: false));
+            return redirect()->to(match ($request->user()->role) {
+                User::ROLE_DOKTER => route('doctor.dashboard', absolute: false),
+                User::ROLE_PERAWAT_UK => route('uk.dashboard', absolute: false),
+                User::ROLE_ADMIN => route('admin.dashboard', absolute: false),
+                default => route('nurse-regular.dashboard', absolute: false),
+            });
         }
 
         $request->user()->sendEmailVerificationNotification();

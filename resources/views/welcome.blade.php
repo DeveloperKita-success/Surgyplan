@@ -121,14 +121,6 @@
                                     Masuk
                                 </a>
 
-                                @if (Route::has('register'))
-                                    <a
-                                        href="{{ route('register') }}"
-                                        class="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700 active:scale-95"
-                                    >
-                                        Daftar
-                                    </a>
-                                @endif
                             @endauth
                         </nav>
                     @endif
@@ -363,14 +355,6 @@
                                         class="inline-flex items-center justify-center rounded-xl bg-white px-5 py-3 text-sm font-semibold text-emerald-700 transition hover:bg-emerald-50 active:scale-95"
                                     >
                                         Masuk
-                                    </a>
-                                @endif
-                                @if (Route::has('register'))
-                                    <a
-                                        href="{{ route('register') }}"
-                                        class="inline-flex items-center justify-center rounded-xl px-5 py-3 text-sm font-semibold text-white ring-1 ring-white/40 transition hover:bg-white/10 active:scale-95"
-                                    >
-                                        Buat Akun
                                     </a>
                                 @endif
                             </div>

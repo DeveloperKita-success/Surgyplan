@@ -21,6 +21,7 @@ class SurgeryRequest extends Model
         'requested_date',
         'requested_start_time',
         'requested_end_time',
+        'risk_estimation',
         'patient_priority',
         'request_status',
         'notes',
