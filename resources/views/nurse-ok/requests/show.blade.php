@@ -58,9 +58,7 @@
         <div class="grid gap-5 xl:grid-cols-[1.1fr_0.95fr_0.95fr]">
             <section class="space-y-5">
                 <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-                    <div class="rounded-full bg-emerald-200 px-4 py-2 text-sm font-bold text-emerald-800">
-                        DATA PASIEN (Hanya Dapat Dilihat)
-                    </div>
+                    <div class="rounded-full bg-emerald-200 px-4 py-2 text-sm font-bold text-emerald-800">DATA PASIEN (Hanya Dapat Dilihat)</div>
                     <dl class="mt-4 space-y-2 text-sm">
                         <div class="grid grid-cols-[130px_12px_1fr] gap-2"><dt class="text-slate-500">No. RM</dt><dd>:</dd><dd class="font-semibold text-slate-800">{{ $patient->medical_record_number }}</dd></div>
                         <div class="grid grid-cols-[130px_12px_1fr] gap-2"><dt class="text-slate-500">Nama Pasien</dt><dd>:</dd><dd class="font-semibold text-slate-800">{{ $patient->name }}</dd></div>
@@ -74,9 +72,7 @@
                 </div>
 
                 <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-                    <div class="rounded-full bg-emerald-200 px-4 py-2 text-sm font-bold text-emerald-800">
-                        Informed Consent
-                    </div>
+                    <div class="rounded-full bg-emerald-200 px-4 py-2 text-sm font-bold text-emerald-800">Informed Consent</div>
                     <dl class="mt-4 space-y-2 text-sm">
                         <div class="grid grid-cols-[140px_12px_1fr] gap-2"><dt class="text-slate-500">Persetujuan Tindakan</dt><dd>:</dd><dd class="font-semibold text-slate-800">{{ $checklist?->surgical_consent ? 'Ada' : 'Belum ada' }}</dd></div>
                         <div class="grid grid-cols-[140px_12px_1fr] gap-2"><dt class="text-slate-500">Persetujuan Anestesi</dt><dd>:</dd><dd class="font-semibold text-slate-800">{{ $checklist?->anesthesia_consent ? 'Ada' : 'Belum ada' }}</dd></div>
@@ -84,9 +80,6 @@
                         <div class="grid grid-cols-[140px_12px_1fr] gap-2"><dt class="text-slate-500">Alergi</dt><dd>:</dd><dd class="font-semibold text-slate-800">{{ $checklist?->allergy ?: 'Tidak ada' }}</dd></div>
                         <div class="grid grid-cols-[140px_12px_1fr] gap-2"><dt class="text-slate-500">Catatan tambahan</dt><dd>:</dd><dd class="font-semibold text-slate-800">{{ $checklist?->final_note ?: '-' }}</dd></div>
                     </dl>
-                    <div class="mt-4 space-y-2">
-
-                    </div>
                 </div>
             </section>
 
@@ -95,9 +88,7 @@
                     @csrf
                     <div class="grid gap-5 xl:grid-cols-2">
                         <section class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-                            <div class="rounded-full bg-emerald-200 px-4 py-2 text-sm font-bold text-emerald-800">
-                                Checklist Verifikasi
-                            </div>
+                            <div class="rounded-full bg-emerald-200 px-4 py-2 text-sm font-bold text-emerald-800">Checklist Verifikasi</div>
 
                             <div class="mt-4 space-y-3">
                                 @foreach ($documentItems as $item)
@@ -109,34 +100,20 @@
 
                                         <div class="flex items-center gap-3">
                                             @if ($item['file'])
-                                                <a href="{{ asset('storage/'.$item['file']) }}" target="_blank" class="rounded-md bg-emerald-700 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-800">
-                                                    Lihat File
-                                                </a>
+                                                <a href="{{ asset('storage/'.$item['file']) }}" target="_blank" class="rounded-md bg-emerald-700 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-800">Lihat File</a>
                                             @endif
 
                                             @isset($item['signature_name'])
-                                                @if ($isReviewable)
-                                                    <input type="hidden" name="{{ $item['signature_name'] }}" value="0" form="verification-form">
-                                                    <label class="inline-flex items-center gap-2 text-xs font-bold text-emerald-800">
-                                                        <input
-                                                            type="checkbox"
-                                                            name="{{ $item['signature_name'] }}"
-                                                            value="1"
-                                                            form="verification-form"
-                                                            @checked(old($item['signature_name'], $item['checked']))
-                                                            class="h-5 w-5 rounded border-slate-300 text-cyan-700 focus:ring-cyan-600"
-                                                        >
-                                                        Sudah TTD
-                                                    </label>
-                                                @else
-                                                    <span class="rounded-md px-2.5 py-1 text-xs font-semibold {{ $item['checked'] ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700' }}">
-                                                        {{ $item['checked'] ? 'Sudah TTD' : 'Belum TTD' }}
-                                                    </span>
-                                                @endif
+                                                <input type="hidden" name="{{ $item['signature_name'] }}" value="0" form="verification-form">
+                                                <label class="inline-flex items-center gap-2 text-xs font-bold text-emerald-800">
+                                                    <input type="checkbox" name="{{ $item['signature_name'] }}" value="1" form="verification-form" @checked(old($item['signature_name'], $item['checked'])) class="h-5 w-5 rounded border-slate-300 text-cyan-700 focus:ring-cyan-600">
+                                                    Sudah TTD
+                                                </label>
                                             @endisset
                                         </div>
                                     </div>
                                 @endforeach
+
                                 @foreach ($verificationItems as $item)
                                     <div class="rounded-lg bg-emerald-100 p-3">
                                         <span>
@@ -145,12 +122,10 @@
                                         </span>
                                         <div class="mt-3 flex gap-3 text-sm font-semibold text-emerald-900">
                                             <label class="inline-flex items-center gap-2">
-                                                <input type="radio" name="{{ $item['name'] }}" value="1" @checked((string) old($item['name'], (int) ($item['checked'] ?? 0)) === '1') class="border-slate-300 text-cyan-700 focus:ring-cyan-600">
-                                                Iya
+                                                <input type="radio" name="{{ $item['name'] }}" value="1" @checked((string) old($item['name'], (int) ($item['checked'] ?? 0)) === '1') class="border-slate-300 text-cyan-700 focus:ring-cyan-600"> Iya
                                             </label>
                                             <label class="inline-flex items-center gap-2">
-                                                <input type="radio" name="{{ $item['name'] }}" value="0" @checked((string) old($item['name'], (int) ($item['checked'] ?? 0)) === '0') class="border-slate-300 text-cyan-700 focus:ring-cyan-600">
-                                                Tidak
+                                                <input type="radio" name="{{ $item['name'] }}" value="0" @checked((string) old($item['name'], (int) ($item['checked'] ?? 0)) === '0') class="border-slate-300 text-cyan-700 focus:ring-cyan-600"> Tidak
                                             </label>
                                         </div>
                                     </div>
@@ -165,54 +140,44 @@
                                     </select>
                                 </label>
 
-                                <div class="grid gap-3 md:grid-cols-2">
-                                    <label class="block rounded-lg bg-emerald-100 p-3">
-                                        <span class="block text-sm font-bold text-emerald-900">Nama Dokter anestesi</span>
-                                        <input name="anesthesiologist_name" value="{{ old('anesthesiologist_name', $verification?->anesthesiologist_name) }}" class="mt-2 w-full rounded-lg border-emerald-200 text-sm focus:border-cyan-600 focus:ring-cyan-600">
-                                    </label>
-                                    <div
-                                        x-data="{ anesthesiaType: @js($selectedAnesthesiaType) }"
-                                        class="rounded-lg bg-emerald-100 p-3 md:col-span-2"
-                                    >
-                                        <span class="block text-sm font-bold text-emerald-900">Jenis Anestesi</span>
-                                        <div class="mt-3 grid gap-2 text-sm text-emerald-950 md:grid-cols-2">
-                                            @foreach ($anesthesiaOptions as $anesthesiaOption)
-                                                <label class="inline-flex items-center gap-2">
-                                                    <input
-                                                        type="radio"
-                                                        name="anesthesia_type"
-                                                        value="{{ $anesthesiaOption }}"
-                                                        x-model="anesthesiaType"
-                                                        @checked($selectedAnesthesiaType === $anesthesiaOption)
-                                                        class="border-slate-300 text-cyan-700 focus:ring-cyan-600"
-                                                    >
-                                                    {{ $anesthesiaOption }}
-                                                </label>
-                                            @endforeach
-                                        </div>
-
-                                        <div x-show="anesthesiaType === 'Lainnya'" x-cloak class="mt-3">
-                                            <label class="text-sm font-semibold text-emerald-900">Jenis anestesi lainnya</label>
-                                            <input
-                                                name="anesthesia_type_other"
-                                                value="{{ $otherAnesthesiaType }}"
-                                                class="mt-2 w-full rounded-lg border-emerald-200 text-sm focus:border-cyan-600 focus:ring-cyan-600"
-                                            >
-                                        </div>
-                                    </div>
-                                </div>
-
                                 <label class="block rounded-lg bg-emerald-100 p-3">
-                                    <span class="block text-sm font-bold text-emerald-900">Catatan anestesi</span>
-                                    <textarea name="anesthesia_note" rows="2" class="mt-2 w-full rounded-lg border-emerald-200 text-sm focus:border-cyan-600 focus:ring-cyan-600">{{ old('anesthesia_note', $verification?->anesthesia_note) }}</textarea>
+                                    <span class="block text-sm font-bold text-emerald-900">Nama Dokter anestesi</span>
+                                    <input name="anesthesiologist_name" value="{{ old('anesthesiologist_name', $verification?->anesthesiologist_name) }}" class="mt-2 w-full rounded-lg border-emerald-200 text-sm focus:border-cyan-600 focus:ring-cyan-600">
                                 </label>
+
+                                <div x-data="{ anesthesiaType: @js($selectedAnesthesiaType) }" class="rounded-lg bg-emerald-100 p-3">
+                                    <span class="block text-sm font-bold text-emerald-900">Jenis Anestesi</span>
+                                    <select name="anesthesia_type" x-model="anesthesiaType" class="mt-2 w-full rounded-lg border-emerald-200 text-sm focus:border-cyan-600 focus:ring-cyan-600">
+                                        <option value="">Pilih jenis anestesi</option>
+                                        @foreach ($anesthesiaOptions as $anesthesiaOption)
+                                            <option value="{{ $anesthesiaOption }}" @selected($selectedAnesthesiaType === $anesthesiaOption)>{{ $anesthesiaOption }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('anesthesia_type')
+                                        <p class="mt-2 text-xs font-semibold text-rose-600">{{ $message }}</p>
+                                    @enderror
+
+                                    <div x-show="anesthesiaType === 'Lainnya'" x-cloak class="mt-2">
+                                        <input name="anesthesia_type_other"
+                                            value="{{ $otherAnesthesiaType }}"
+                                            class="w-full rounded-lg border-emerald-200 text-sm focus:border-cyan-600 focus:ring-cyan-600"
+                                            placeholder="Isi jenis anestesi lainnya">
+                                        @error('anesthesia_type_other')
+                                            <p class="mt-2 text-xs font-semibold text-rose-600">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+
+                                    <label class="mt-4 block text-sm font-bold text-emerald-900">Catatan anestesi</label>
+                                    <textarea name="anesthesia_note" rows="3" class="mt-2 w-full rounded-lg border-emerald-200 text-sm focus:border-cyan-600 focus:ring-cyan-600" placeholder="Tulis catatan anestesi">{{ old('anesthesia_note', $verification?->anesthesia_note) }}</textarea>
+                                    @error('anesthesia_note')
+                                        <p class="mt-2 text-xs font-semibold text-rose-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
                             </div>
                         </section>
 
-                        <section class="rounded-2xl border border-cyan-500 bg-white p-4 shadow-sm">
-                            <div class="rounded-full bg-emerald-200 px-4 py-2 text-sm font-bold text-emerald-800">
-                                Status Persetujuan Anestesi
-                            </div>
+                        <section class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+                            <div class="block rounded-lg bg-emerald-100 p-3">Status Persetujuan Anestesi</div>
                             <p class="mt-1 text-xs text-slate-500">Disetujui oleh dokter anestesi.</p>
 
                             <div class="mt-4 overflow-hidden rounded-lg border border-emerald-200">
@@ -232,63 +197,29 @@
                                 </div>
                             </div>
 
-                            <div class="mt-4 rounded-lg border border-slate-200 p-3">
-                                <label class="text-sm font-bold text-slate-700">Pilih Dokter Operator</label>
-                                <select name="doctor_id" class="mt-2 w-full rounded-lg border-slate-200 text-sm focus:border-cyan-600 focus:ring-cyan-600">
-                                    <option value="">Pilih dokter</option>
-                                    @foreach ($doctors as $doctor)
-                                        <option value="{{ $doctor->id }}" @selected(old('doctor_id', $surgeryRequest->requested_doctor_id) == $doctor->id)>
-                                            {{ $doctor->title }} {{ $doctor->user?->name }}{{ $doctor->specialist ? ' - '.$doctor->specialist->name : '' }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <div class="mt-4 rounded-lg border border-slate-200 p-3">
-                                <label class="text-sm font-bold text-slate-700">Pilih Kamar / Ruang Operasi</label>
-                                <select name="operating_room_id" class="mt-2 w-full rounded-lg border-slate-200 text-sm focus:border-cyan-600 focus:ring-cyan-600">
-                                    <option value="">Pilih kamar operasi</option>
-                                    @foreach ($rooms as $room)
-                                        @php($isBooked = $room->surgerySchedules->isNotEmpty())
-                                        <option value="{{ $room->id }}" @selected(old('operating_room_id') == $room->id) @disabled($isBooked || $room->status !== 'siap')>
-                                            {{ $room->room_name }} - {{ $room->room_code }}{{ $room->specialist ? ' ('.$room->specialist->name.')' : '' }}{{ $isBooked ? ' - sudah terpakai tanggal ini' : '' }}{{ $room->status !== 'siap' ? ' - '.$room->status : '' }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <div class="mt-4 grid gap-3 md:grid-cols-2">
-                                <label class="block">
-                                    <span class="text-sm font-bold text-slate-700">Jam mulai</span>
-                                    <input type="time" value="{{ substr((string) $surgeryRequest->requested_start_time, 0, 5) }}" disabled class="mt-2 w-full rounded-lg border-slate-200 bg-slate-50 text-sm text-slate-500">
-                                </label>
-                                <label class="block">
-                                    <span class="text-sm font-bold text-slate-700">Jam selesai</span>
-                                    <input type="time" name="end_time" value="{{ old('end_time', substr((string) $surgeryRequest->requested_end_time, 0, 5)) }}" class="mt-2 w-full rounded-lg border-slate-200 text-sm focus:border-cyan-600 focus:ring-cyan-600">
+                            <div class="block rounded-lg bg-emerald-100 p-3 mt-5">
+                                <label class="text-sm font-bold text-emerald-900">Status Persetujuan anestesi</label>
+                                <label class="mt-3 inline-flex items-center gap-2 text-sm font-semibold text-emerald-900">
+                                    <input type="hidden" name="doctor_anesthesia_approved" value="0" form="verification-form">
+                                    <input type="checkbox" name="doctor_anesthesia_approved" value="1" form="verification-form" @checked(old('doctor_anesthesia_approved', $verification?->doctor_anesthesia_approved)) class="h-5 w-5 rounded border-slate-300 text-cyan-700 focus:ring-cyan-600">
+                                    Disetujui (approve) oleh dokter anestesi
                                 </label>
                             </div>
                         </section>
                     </div>
 
                     <section class="mt-5 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-                        <div class="rounded-full bg-emerald-200 px-4 py-2 text-sm font-bold text-emerald-800">
-                            Status Akhir (pilih salah satu)
-                        </div>
-                            <div class="mt-3 grid gap-3 md:grid-cols-3">
-                                <label class="rounded-lg border border-emerald-200 bg-emerald-50 p-3">
-                                    <input type="radio" name="decision" value="disetujui" @checked(old('decision', 'disetujui') === 'disetujui') class="border-slate-300 text-cyan-700 focus:ring-cyan-600">
-                                    <span class="ml-2 font-bold text-emerald-700">Diterima</span>
-                                    <p class="mt-1 text-xs text-emerald-700">Ruangan operasi siap dan pasien bisa dijadwalkan.</p>
-                                </label>
-                            <label class="rounded-lg border border-amber-200 bg-amber-50 p-3">
-                                <input type="radio" name="decision" value="ditunda" @checked(old('decision') === 'ditunda') class="border-slate-300 text-cyan-700 focus:ring-cyan-600">
-                                <span class="ml-2 font-bold text-amber-700">Jadwalkan Ulang</span>
-                                <p class="mt-1 text-xs text-amber-700">Operasi dijadwalkan ulang pada waktu yang ditentukan.</p>
+                        <div class="rounded-full bg-emerald-200 px-4 py-2 text-sm font-bold text-emerald-800">Status Akhir (pilih salah satu)</div>
+                        <div class="mt-3 grid gap-3 md:grid-cols-2">
+                            <label class="rounded-lg border border-emerald-200 bg-emerald-50 p-3">
+                                <input type="radio" name="decision" value="disetujui" @checked(old('decision', 'disetujui') === 'disetujui') class="border-slate-300 text-cyan-700 focus:ring-cyan-600">
+                                <span class="ml-2 font-bold text-emerald-700">Diterima</span>
+                                <p class="mt-1 text-xs text-emerald-700">Data pasien lolos verifikasi Perawat OK.</p>
                             </label>
                             <label class="rounded-lg border border-rose-200 bg-rose-50 p-3">
-                                <input type="radio" name="decision" value="ditolak" @checked(old('decision') === 'ditolak') class="border-slate-300 text-cyan-700 focus:ring-cyan-600">
-                                <span class="ml-2 font-bold text-rose-700">Ditolak</span>
-                                <p class="mt-1 text-xs text-rose-700">Operasi ditolak untuk sementara waktu.</p>
+                                <input type="radio" name="decision" value="ditunda" @checked(old('decision') === 'ditunda') class="border-slate-300 text-cyan-700 focus:ring-cyan-600">
+                                <span class="ml-2 font-bold text-rose-700">Jadwalkan Ulang</span>
+                                <p class="mt-1 text-xs text-rose-700">Pengajuan belum siap dan perlu penjadwalan ulang.</p>
                             </label>
                         </div>
 
@@ -297,15 +228,8 @@
                             <textarea name="verification_note" rows="2" maxlength="200" placeholder="Tulis catatan di sini..." class="mt-2 w-full rounded-lg border-slate-200 text-sm focus:border-cyan-600 focus:ring-cyan-600">{{ old('verification_note', $verification?->verification_note) }}</textarea>
                         </label>
 
-                        <label class="mt-3 block">
-                            <span class="text-sm font-semibold text-slate-700">Alasan jika ditolak / dijadwalkan ulang</span>
-                            <input name="reason" value="{{ old('reason') }}" class="mt-2 w-full rounded-lg border-slate-200 text-sm focus:border-cyan-600 focus:ring-cyan-600">
-                        </label>
-
                         <div class="mt-4 flex justify-end">
-                            <button type="submit" class="rounded-lg bg-blue-700 px-5 py-3 text-sm font-bold text-white hover:bg-blue-800">
-                                Simpan Verifikasi
-                            </button>
+                            <button type="submit" class="rounded-lg bg-blue-700 px-5 py-3 text-sm font-bold text-white hover:bg-blue-800">Simpan Verifikasi</button>
                         </div>
                     </section>
                 </form>

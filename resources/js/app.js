@@ -5,8 +5,8 @@ import Alpine from 'alpinejs';
 window.Alpine = Alpine;
 
 document.addEventListener('alpine:init', () => {
-    Alpine.data('icdAutocomplete', (type) => ({
-        query: '',
+    Alpine.data('icdAutocomplete', (type, initialQuery = '') => ({
+        query: initialQuery ?? '',
         results: [],
         open: false,
         hovered: -1,

@@ -20,8 +20,8 @@ class OperationScheduleController extends Controller
         abort_unless($user?->isOkNurse(), 403);
 
         $today = CarbonImmutable::today();
-        $month = (int) $request->integer('month', $today->month);
-        $year = (int) $request->integer('year', $today->year);
+        $month = (int) $request->input('month', $today->month);
+        $year = (int) $request->input('year', $today->year);
 
         if ($month < 1 || $month > 12) {
             $month = $today->month;
@@ -44,12 +44,11 @@ class OperationScheduleController extends Controller
             ->orderBy('start_time')
             ->get();
 
-        $schedulesByDate = $monthSchedules->groupBy(fn (SurgerySchedule $schedule) => $schedule->surgery_date->toDateString());
-        $selectedSchedules = $schedulesByDate->get($selectedDate->toDateString(), collect());
+        $schedulesByDate = $monthSchedules->groupBy(fn (SurgerySchedule $schedule) => (string) $schedule->getRawOriginal('surgery_date'));
+        $selectedSchedules = $schedulesByDate->get($selectedDate->format('Y-m-d'), collect());
         $bookedRoomIds = $selectedSchedules->pluck('operating_room_id')->unique();
 
         $rooms = OperatingRoom::query()
-            ->with('specialist')
             ->orderBy('room_name')
             ->get();
 
