@@ -49,7 +49,7 @@ class RegisteredUserController extends Controller
             'sip_number' => ['required_if:role,'.User::ROLE_DOKTER, 'nullable', 'string', 'max:100', 'unique:doctors,sip_number'],
 
             // Perawat
-            'nurse_type' => ['required_if:role,'.self::ROLE_UI_PERAWAT, 'nullable', 'string', Rule::in([User::ROLE_PERAWAT_UK, User::ROLE_PERAWAT_BIASA])],
+            'nurse_type' => ['required_if:role,'.self::ROLE_UI_PERAWAT, 'nullable', 'string', Rule::in([User::ROLE_PERAWAT_OK, User::ROLE_PERAWAT_BIASA])],
             'origin_unit' => ['required_if:nurse_type,'.User::ROLE_PERAWAT_BIASA, 'nullable', 'string', Rule::in(['IGD', 'Bangsal', 'Poli'])],
         ]);
 
@@ -74,7 +74,7 @@ class RegisteredUserController extends Controller
             ]);
         }
 
-        if (in_array($user->role, [User::ROLE_PERAWAT_UK, User::ROLE_PERAWAT_BIASA], true)) {
+        if (in_array($user->role, [User::ROLE_PERAWAT_OK, User::ROLE_PERAWAT_BIASA], true)) {
             Nurse::create([
                 'user_id' => $user->id,
                 'nurse_type' => $user->role,

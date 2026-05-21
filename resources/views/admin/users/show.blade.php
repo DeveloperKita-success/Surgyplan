@@ -22,7 +22,7 @@
                     <p class="mt-2 text-sm text-slate-700">
                         {{ match ($userItem->role) {
                             \App\Models\User::ROLE_DOKTER => 'Dokter',
-                            \App\Models\User::ROLE_PERAWAT_UK => 'Perawat OK',
+                            \App\Models\User::ROLE_PERAWAT_OK => 'Perawat OK',
                             \App\Models\User::ROLE_PERAWAT_BIASA => 'Perawat Reguler',
                             \App\Models\User::ROLE_ADMIN => 'Admin',
                             default => 'Pengguna',
@@ -60,14 +60,14 @@
             </div>
         @endif
 
-        @if (in_array($userItem->role, [\App\Models\User::ROLE_PERAWAT_UK, \App\Models\User::ROLE_PERAWAT_BIASA], true))
+        @if (in_array($userItem->role, [\App\Models\User::ROLE_PERAWAT_OK, \App\Models\User::ROLE_PERAWAT_BIASA], true))
             <div class="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
                 <h2 class="text-sm font-semibold text-slate-700">Detail Perawat</h2>
                 <div class="mt-4 grid gap-4 sm:grid-cols-2">
                     <div>
                         <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Jenis Perawat</p>
                         <p class="mt-2 text-sm text-slate-700">
-                            {{ $userItem->role === \App\Models\User::ROLE_PERAWAT_UK ? 'Perawat OK' : 'Perawat Reguler' }}
+                            {{ $userItem->role === \App\Models\User::ROLE_PERAWAT_OK ? 'Perawat OK' : 'Perawat Reguler' }}
                         </p>
                     </div>
                     <div>

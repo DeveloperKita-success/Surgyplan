@@ -34,7 +34,7 @@ class AuthenticatedSessionController extends Controller
 
         $destination = match ($user->role) {
             User::ROLE_DOKTER => route('doctor.dashboard', absolute: false),
-            User::ROLE_PERAWAT_UK => route('uk.dashboard', absolute: false),
+            User::ROLE_PERAWAT_OK => route('nurse-ok.dashboard', absolute: false),
             User::ROLE_ADMIN => route('admin.dashboard', absolute: false),
             default => route('nurse-regular.dashboard', absolute: false),
         };

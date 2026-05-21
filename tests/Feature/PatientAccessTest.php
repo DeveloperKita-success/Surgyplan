@@ -3,7 +3,7 @@
 use App\Models\Patient;
 use App\Models\User;
 
-it('lets doctors and uk nurses view patients without managing them', function () {
+it('lets doctors and ok nurses view patients without managing them', function () {
     $regularNurse = User::factory()->create(['role' => User::ROLE_PERAWAT_BIASA]);
     $patient = Patient::create([
         'medical_record_number' => 'RM-PAT-001',
@@ -13,7 +13,7 @@ it('lets doctors and uk nurses view patients without managing them', function ()
         'created_by' => $regularNurse->id,
     ]);
 
-    foreach ([User::ROLE_DOKTER, User::ROLE_PERAWAT_UK] as $role) {
+    foreach ([User::ROLE_DOKTER, User::ROLE_PERAWAT_OK] as $role) {
         $user = User::factory()->create(['role' => $role]);
 
         $this->actingAs($user)
@@ -97,7 +97,7 @@ it('lets regular nurses manage patients', function () {
             'gender' => 'Perempuan',
             'origin_room' => 'Poli',
         ])
-        ->assertRedirect(route('patients.show', $patient));
+        ->assertRedirect(route('nurse-regular.patients.show', $patient));
 
     $this->assertDatabaseHas('patients', [
         'id' => $patient->id,
@@ -108,7 +108,7 @@ it('lets regular nurses manage patients', function () {
 
     $this->actingAs($regularNurse)
         ->delete(route('patients.destroy', $patient))
-        ->assertRedirect(route('patients.index'));
+        ->assertRedirect(route('nurse-regular.patients.index'));
 
     $this->assertDatabaseMissing('patients', [
         'id' => $patient->id,

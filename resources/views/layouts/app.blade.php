@@ -28,7 +28,7 @@
         $user = auth()->user();
         $roleLabel = match ($user?->role) {
             \App\Models\User::ROLE_DOKTER => 'Dokter',
-            \App\Models\User::ROLE_PERAWAT_UK => 'Perawat OK',
+            \App\Models\User::ROLE_PERAWAT_OK => 'Perawat OK',
             \App\Models\User::ROLE_PERAWAT_BIASA => 'Perawat Reguler',
             \App\Models\User::ROLE_ADMIN => 'Admin',
             default => 'Pengguna',
@@ -36,7 +36,7 @@
 
         $sidebarView = match ($user?->role) {
             \App\Models\User::ROLE_DOKTER => 'layouts.sidebars.doctor',
-            \App\Models\User::ROLE_PERAWAT_UK => 'layouts.sidebars.nurse-uk',
+            \App\Models\User::ROLE_PERAWAT_OK => 'layouts.sidebars.nurse-ok',
             \App\Models\User::ROLE_PERAWAT_BIASA => 'layouts.sidebars.nurse-regular',
             \App\Models\User::ROLE_ADMIN => 'layouts.sidebars.admin',
             default => null,

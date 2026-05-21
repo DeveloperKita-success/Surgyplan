@@ -19,7 +19,7 @@ function createDoctorScheduleFixture(): array
         'str_number' => 'STR-DOC-1',
         'sip_number' => 'SIP-DOC-1',
     ]);
-    $approver = User::factory()->create(['role' => User::ROLE_PERAWAT_UK]);
+    $approver = User::factory()->create(['role' => User::ROLE_PERAWAT_OK]);
     $requester = User::factory()->create(['role' => User::ROLE_PERAWAT_BIASA]);
     $patient = Patient::create([
         'medical_record_number' => 'RM-DOC-1',

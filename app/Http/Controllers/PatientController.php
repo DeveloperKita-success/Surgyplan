@@ -17,7 +17,7 @@ class PatientController extends Controller
     {
         $user = $this->currentUser();
 
-        abort_unless($user && in_array($user->role, [User::ROLE_DOKTER, User::ROLE_PERAWAT_BIASA, User::ROLE_PERAWAT_UK], true), 403);
+        abort_unless($user && in_array($user->role, [User::ROLE_DOKTER, User::ROLE_PERAWAT_BIASA, User::ROLE_PERAWAT_OK], true), 403);
     }
 
     private function abortUnlessRegularNurse(): void

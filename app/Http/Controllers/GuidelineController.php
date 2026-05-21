@@ -17,7 +17,7 @@ class GuidelineController extends Controller
         /** @var User|null $user */
         $user = Auth::user();
 
-        abort_unless($user && in_array($user->role, [User::ROLE_DOKTER, User::ROLE_PERAWAT_BIASA, User::ROLE_PERAWAT_UK], true), 403);
+        abort_unless($user && in_array($user->role, [User::ROLE_DOKTER, User::ROLE_PERAWAT_BIASA, User::ROLE_PERAWAT_OK], true), 403);
     }
 
     public function index(Request $request): View

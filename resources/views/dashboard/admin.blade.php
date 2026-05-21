@@ -12,7 +12,7 @@
             x-data="{
                 onlineCount: 0,
                 doctorOnline: 0,
-                ukNurseOnline: 0,
+                okNurseOnline: 0,
                 regularNurseOnline: 0,
                 refresh() {
                     fetch('{{ route('admin.online-count') }}')
@@ -20,7 +20,7 @@
                         .then((data) => {
                             this.onlineCount = data.online ?? 0;
                             this.doctorOnline = data.online_doctor ?? 0;
-                            this.ukNurseOnline = data.online_uk_nurse ?? 0;
+                            this.okNurseOnline = data.online_ok_nurse ?? 0;
                             this.regularNurseOnline = data.online_regular_nurse ?? 0;
                         });
                 },
@@ -41,7 +41,7 @@
             </div>
             <div class="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
                 <p class="text-sm text-slate-500">Perawat OK Aktif</p>
-                <p class="mt-3 text-3xl font-bold text-slate-900" x-text="ukNurseOnline">0</p>
+                <p class="mt-3 text-3xl font-bold text-slate-900" x-text="okNurseOnline">0</p>
             </div>
             <div class="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
                 <p class="text-sm text-slate-500">Perawat Reguler Aktif</p>

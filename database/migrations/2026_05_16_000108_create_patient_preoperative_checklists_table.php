@@ -13,12 +13,16 @@ return new class extends Migration
             $table->foreignId('surgery_request_id')->constrained('surgery_requests');
             $table->boolean('surgical_consent');
             $table->string('surgical_consent_file')->nullable();
+            $table->boolean('surgical_consent_signed')->default(false);
             $table->boolean('anesthesia_consent');
             $table->string('anesthesia_consent_file')->nullable();
+            $table->boolean('anesthesia_consent_signed')->default(false);
             $table->boolean('lab_result_complete');
             $table->string('lab_result_file')->nullable();
+            $table->boolean('lab_result_signed')->default(false);
             $table->boolean('radiology_available');
             $table->string('radiology_file')->nullable();
+            $table->boolean('radiology_signed')->default(false);
             $table->boolean('anesthesia_consultation_done');
             $table->text('anesthesia_risk_estimation')->nullable();
             $table->boolean('vital_sign_stable');

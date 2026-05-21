@@ -21,8 +21,8 @@ class DashboardController extends Controller
             return redirect()->route('doctor.dashboard');
         }
 
-        if ($user->role === User::ROLE_PERAWAT_UK) {
-            return redirect()->route('nurse-uk.dashboard');
+        if ($user->role === User::ROLE_PERAWAT_OK) {
+            return redirect()->route('nurse-ok.dashboard');
         }
 
         if ($user->role === User::ROLE_ADMIN) {
@@ -42,14 +42,14 @@ class DashboardController extends Controller
         return view('doctor.dashboard');
     }
 
-    public function nurseUk(): View
+    public function nurseOk(): View
     {
         /** @var \App\Models\User $user */
         $user = Auth::user();
 
-        abort_unless($user->role === User::ROLE_PERAWAT_UK, 403);
+        abort_unless($user->role === User::ROLE_PERAWAT_OK, 403);
 
-        return view('nurse-uk.dashboard');
+        return view('nurse-ok.dashboard');
     }
 
     public function nurseRegular(): View
@@ -84,7 +84,7 @@ class DashboardController extends Controller
             ->map(function ($row) {
                 $roleLabel = match ($row->role) {
                     User::ROLE_DOKTER => 'Dokter',
-                    User::ROLE_PERAWAT_UK => 'Perawat OK',
+                    User::ROLE_PERAWAT_OK => 'Perawat OK',
                     User::ROLE_PERAWAT_BIASA => 'Perawat Reguler',
                     default => 'Pengguna',
                 };
@@ -139,7 +139,7 @@ class DashboardController extends Controller
         return response()->json([
             'online' => $onlineCount,
             'online_doctor' => (int) ($roleCounts[User::ROLE_DOKTER] ?? 0),
-            'online_uk_nurse' => (int) ($roleCounts[User::ROLE_PERAWAT_UK] ?? 0),
+            'online_ok_nurse' => (int) ($roleCounts[User::ROLE_PERAWAT_OK] ?? 0),
             'online_regular_nurse' => (int) ($roleCounts[User::ROLE_PERAWAT_BIASA] ?? 0),
             'cutoff_seconds' => 60,
         ]);

@@ -56,14 +56,14 @@ class SurgeryRequest extends Model
         return $this->hasMany(PatientPreoperativeChecklistItem::class);
     }
 
-    public function ukVerificationChecklist(): HasOne
+    public function okVerificationChecklist(): HasOne
     {
-        return $this->hasOne(UkVerificationChecklist::class);
+        return $this->hasOne(OkVerificationChecklist::class);
     }
 
-    public function ukVerificationChecklistItems(): HasMany
+    public function okVerificationChecklistItems(): HasMany
     {
-        return $this->hasMany(UkVerificationChecklistItem::class);
+        return $this->hasMany(OkVerificationChecklistItem::class);
     }
 
     public function surgerySchedules(): HasMany

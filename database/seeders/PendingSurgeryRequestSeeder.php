@@ -127,7 +127,7 @@ class PendingSurgeryRequestSeeder extends Seeder
                     'requested_start_time' => $row['requested_start_time'],
                     'requested_end_time' => $row['requested_end_time'],
                     'patient_priority' => $row['patient_priority'],
-                    'notes' => 'Seeder: pengajuan belum divalidasi Perawat UK.',
+                    'notes' => 'Seeder: pengajuan belum divalidasi Perawat OK.',
                 ],
             );
 
@@ -156,7 +156,7 @@ class PendingSurgeryRequestSeeder extends Seeder
                     'has_previous_surgery' => false,
                     'previous_surgery_note' => null,
                     'previous_surgery_date' => null,
-                    'final_note' => 'Menunggu review dan validasi Perawat UK.',
+                    'final_note' => 'Menunggu review dan validasi Perawat OK.',
                 ],
             );
 
@@ -168,7 +168,7 @@ class PendingSurgeryRequestSeeder extends Seeder
                 [
                     'changed_by' => $regularNurseUser->id,
                     'old_status' => null,
-                    'note' => 'Pengajuan dibuat dari seeder dan belum direview Perawat UK.',
+                    'note' => 'Pengajuan dibuat dari seeder dan belum direview Perawat OK.',
                 ],
             );
         }

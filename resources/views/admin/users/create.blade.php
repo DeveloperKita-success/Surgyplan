@@ -6,7 +6,7 @@
         </div>
     </x-slot>
 
-    <div class="mx-auto max-w-7xl" x-data="{ role: '{{ old('role') }}', nurseIsUk: '{{ old('nurse_is_uk', '1') }}' }">
+    <div class="mx-auto max-w-7xl" x-data="{ role: '{{ old('role') }}', nurseIsOk: '{{ old('nurse_is_ok', '1') }}' }">
         <form method="POST" action="{{ route('admin.users.store') }}" class="space-y-6">
             @csrf
 
@@ -166,9 +166,9 @@
                             <label class="inline-flex items-center gap-2 text-sm text-slate-700">
                                 <input
                                     type="radio"
-                                    name="nurse_is_uk"
+                                    name="nurse_is_ok"
                                     value="1"
-                                    x-model="nurseIsUk"
+                                    x-model="nurseIsOk"
                                     class="h-4 w-4 border-slate-300 text-emerald-600 focus:ring-emerald-200"
                                 />
                                 Ya (Perawat OK)
@@ -176,25 +176,25 @@
                             <label class="inline-flex items-center gap-2 text-sm text-slate-700">
                                 <input
                                     type="radio"
-                                    name="nurse_is_uk"
+                                    name="nurse_is_ok"
                                     value="0"
-                                    x-model="nurseIsUk"
+                                    x-model="nurseIsOk"
                                     class="h-4 w-4 border-slate-300 text-emerald-600 focus:ring-emerald-200"
                                 />
                                 Tidak (Perawat Reguler)
                             </label>
                         </div>
-                        @error('nurse_is_uk')
+                        @error('nurse_is_ok')
                             <p class="mt-2 text-xs text-rose-600">{{ $message }}</p>
                         @enderror
                     </div>
 
-                    <div x-show="nurseIsUk === '0'" x-transition>
+                    <div x-show="nurseIsOk === '0'" x-transition>
                         <label class="text-sm font-semibold text-slate-700" for="origin_unit">Unit Asal</label>
                         <select
                             id="origin_unit"
                             name="origin_unit"
-                            x-bind:required="role === 'perawat' && nurseIsUk === '0'"
+                            x-bind:required="role === 'perawat' && nurseIsOk === '0'"
                             class="mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-700 shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-200"
                         >
                             <option value="" disabled {{ old('origin_unit') ? '' : 'selected' }}>Pilih unit asal</option>

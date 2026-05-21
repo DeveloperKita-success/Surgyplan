@@ -11,8 +11,8 @@ return new class extends Migration
         Schema::create('surgery_requests', function (Blueprint $table): void {
             $table->id();
             $table->foreignId('patient_id')->constrained('patients');
-            $table->foreignId('diagnosis_id')->nullable()->constrained('diagnoses')->nullOnDelete();
-            $table->foreignId('procedure_id')->nullable()->constrained('procedures')->nullOnDelete();
+            $table->string('diagnosis_text')->nullable();
+            $table->string('procedure_text')->nullable();
             $table->foreignId('requested_by')->constrained('users');
             $table->foreignId('requested_doctor_id')->nullable()->constrained('doctors')->nullOnDelete();
             $table->date('requested_date');

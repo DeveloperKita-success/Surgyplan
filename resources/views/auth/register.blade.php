@@ -117,7 +117,7 @@
                     class="form-control mt-1 block w-full rounded-md border-slate-300 bg-white text-slate-900 shadow-sm focus:border-emerald-500 focus:ring-emerald-500"
                 >
                     <option value="" disabled {{ old('nurse_type') ? '' : 'selected' }}>Pilih opsi</option>
-                    <option value="perawat_uk" {{ old('nurse_type') === 'perawat_uk' ? 'selected' : '' }}>Ya, Perawat OK</option>
+                    <option value="perawat_ok" {{ old('nurse_type') === 'perawat_ok' ? 'selected' : '' }}>Ya, Perawat OK</option>
                     <option value="perawat_biasa" {{ old('nurse_type') === 'perawat_biasa' ? 'selected' : '' }}>Bukan Perawat OK</option>
                 </select>
                 <x-input-error :messages="$errors->get('nurse_type')" class="mt-2" />

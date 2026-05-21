@@ -1,4 +1,4 @@
-# SurgyPlan — Laravel 11 + Pest
+# SurgyPlan - Laravel 11 + Pest
 
 ## Stack
 
@@ -29,7 +29,7 @@ php artisan storage:link    # required for file uploads in local dev
 |---|---|
 | `admin@gmail.com` | admin |
 | `dokter@gmail.com` | dokter |
-| `perawat.uk@gmail.com` | perawat_uk |
+| `perawat.ok@gmail.com` | perawat_ok |
 | `perawat@gmail.com` | perawat_biasa |
 
 ## Testing
@@ -40,20 +40,20 @@ php artisan storage:link    # required for file uploads in local dev
   <env name="DB_CONNECTION" value="sqlite"/>
   <env name="DB_DATABASE" value=":memory:"/>
   ```
-- **`UserFactory` does NOT set `role`** — DB default (`perawat_biasa`) applies. Create with explicit role:
+- **`UserFactory` does NOT set `role`** - DB default (`perawat_biasa`) applies. Create with explicit role:
   ```php
   User::factory()->create(['role' => User::ROLE_DOKTER]);
   ```
-- 5 custom feature tests (`SurgeryRequestTest`, `PatientAccessTest`, `DoctorScheduleTest`, `UkSurgeryRequestTest`, `UkOperatingRoomTest`) create fixtures inline — no Factories for those models yet.
+- 5 custom feature tests (`SurgeryRequestTest`, `PatientAccessTest`, `DoctorScheduleTest`, `OkSurgeryRequestTest`, `OkOperatingRoomTest`) create fixtures inline - no Factories for those models yet.
 
 ## Architecture
 
-- **4 roles** on `users.role`: `dokter`, `perawat_uk`, `perawat_biasa`, `admin`
-- **Role helpers** on `User`: `isDoctor()`, `isNurse()`, `isUkNurse()`, `isRegularNurse()`, `isAdmin()`
-- **Entrypoint**: `DashboardController@index` redirects by role to `doctor.dashboard`, `nurse-uk.dashboard`, `nurse-regular.dashboard`, or `admin.dashboard`
-- **Access control**: 3 middleware aliases registered in `bootstrap/app.php` — `doctor`, `nurse-uk`, `nurse-regular` — each calls `abort_unless($user->isXxx(), 403)`. No Gates/Policies.
+- **4 roles** on `users.role`: `dokter`, `perawat_ok`, `perawat_biasa`, `admin`
+- **Role helpers** on `User`: `isDoctor()`, `isNurse()`, `isOkNurse()`, `isRegularNurse()`, `isAdmin()`
+- **Entrypoint**: `DashboardController@index` redirects by role to `doctor.dashboard`, `nurse-ok.dashboard`, `nurse-regular.dashboard`, or `admin.dashboard`
+- **Access control**: 3 middleware aliases registered in `bootstrap/app.php` - `doctor`, `nurse-ok`, `nurse-regular` - each calls `abort_unless($user->isXxx(), 403)`. No Gates/Policies.
 - **No custom Artisan commands**, **no CI**, **no custom service providers** beyond `AppServiceProvider` (empty).
-- Diagnosis and procedure are free-text fields (`diagnosis_text`, `procedure_text`) on `surgery_requests` (migrations 2026_05_19 dropped old `diagnoses`/`procedures` tables).
+- Diagnosis and procedure are free-text fields (`diagnosis_text`, `procedure_text`) on `surgery_requests`.
 - `RoomOperationRequestController` is **completely commented out** (dead code). The guideline route is also **commented out**.
 - `php artisan storage:link` needed for file uploads stored to `public` disk.
 - `Vite::refresh = true` enables hot reload on backend changes.
@@ -63,22 +63,22 @@ php artisan storage:link    # required for file uploads in local dev
 | Prefix | Middleware | Names |
 |---|---|---|
 | `/doctor/*` | `doctor` | `doctor.dashboard`, `doctor.schedules.*`, `doctor.reports.*` |
-| `/nurse-uk/*` | `nurse-uk` | `nurse-uk.dashboard`, `nurse-uk.patients.*`, `nurse-uk.requests.*`, `nurse-uk.schedules.*`, `nurse-uk.rooms.*`, `nurse-uk.doctors.*` |
+| `/nurse-ok/*` | `nurse-ok` | `nurse-ok.dashboard`, `nurse-ok.patients.*`, `nurse-ok.requests.*`, `nurse-ok.schedules.*`, `nurse-ok.rooms.*`, `nurse-ok.doctors.*` |
 | `/nurse-regular/*` | `nurse-regular` | `nurse-regular.dashboard`, `nurse-regular.patients.*`, `nurse-regular.surgery-requests.*` |
-| `/admin/*` | — | `admin.dashboard`, `admin.users.*`, `admin.specialists.*` |
+| `/admin/*` | - | `admin.dashboard`, `admin.users.*`, `admin.specialists.*` |
 | `/api/icd/search` | auth | ICD autocomplete proxy |
 
 ### View directories
 
-```
+```text
 resources/views/
-├── layouts/sidebars/{admin,doctor,nurse-uk,nurse-regular}.blade.php
-├── nurse-uk/{dashboard,requests,rooms,schedules,patients,doctors}/
-├── nurse-regular/{dashboard,patients,surgery-requests}/
-├── doctor/{dashboard,schedules,reports,patients}/
-├── admin/{users,specialists}/
-├── surgery-requests/   # orphaned — nurse-regular views live in nurse-regular/
-└── dashboard/          # admin dashboard
+|-- layouts/sidebars/{admin,doctor,nurse-ok,nurse-regular}.blade.php
+|-- nurse-ok/{dashboard,requests,rooms,schedules,patients,doctors}/
+|-- nurse-regular/{dashboard,patients,surgery-requests}/
+|-- doctor/{dashboard,schedules,reports,patients}/
+|-- admin/{users,specialists}/
+|-- surgery-requests/   # orphaned - nurse-regular views live in nurse-regular/
+`-- dashboard/          # admin dashboard
 ```
 
 ### ICD Autocomplete
@@ -90,5 +90,5 @@ resources/views/
 - **Indonesian** UI text, status messages, route segments
 - **Dark mode** via Tailwind `class` strategy (`darkMode: 'class'`)
 - **Type hints**: `@var User $user` when accessing `Auth::user()`
-- **`abort_unless()` inline** in controllers — no Gates/Policies
+- **`abort_unless()` inline** in controllers - no Gates/Policies
 - **Editorconfig**: 4-space indent, LF line endings

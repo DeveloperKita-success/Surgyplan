@@ -3,18 +3,23 @@
 namespace App\Http\Controllers\NurseRegular;
 
 use App\Http\Controllers\Controller;
+use App\Mail\DoctorScheduleConflictMail;
 use App\Models\Doctor;
 use App\Models\Guideline;
 use App\Models\Patient;
 use App\Models\PatientPreoperativeChecklist;
 use App\Models\SurgeryHistory;
 use App\Models\SurgeryRequest;
+use App\Models\SurgerySchedule;
 use App\Models\User;
+use App\Models\UserNotification;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
@@ -104,7 +109,7 @@ class SurgeryRequestController extends Controller
             'final_note' => ['nullable', 'string'],
         ]);
 
-        $patient = DB::transaction(function () use ($data) {
+        $surgeryRequest = DB::transaction(function () use ($data) {
             $patient = Patient::firstOrNew([
                 'medical_record_number' => $data['medical_record_number'],
             ]);
@@ -169,12 +174,66 @@ class SurgeryRequestController extends Controller
                 'final_note' => $data['final_note'] ?? null,
             ]);
 
-            return $patient;
+            return $surgeryRequest;
         });
+
+        $this->notifyDoctorIfScheduleConflict($surgeryRequest);
 
         return redirect()
             ->route('nurse-regular.surgery-requests.index')
             ->with('status', 'Pengajuan operasi ruang berhasil disimpan.');
+    }
+
+    private function notifyDoctorIfScheduleConflict(SurgeryRequest $surgeryRequest): void
+    {
+        if (! $surgeryRequest->requested_doctor_id || ! $surgeryRequest->requested_end_time) {
+            return;
+        }
+
+        $conflictingSchedules = SurgerySchedule::query()
+            ->with(['patient', 'operatingRoom'])
+            ->where('doctor_id', $surgeryRequest->requested_doctor_id)
+            ->whereDate('surgery_date', $surgeryRequest->requested_date)
+            ->where('schedule_status', 'scheduled')
+            ->where('start_time', '<', $surgeryRequest->requested_end_time)
+            ->where('end_time', '>', $surgeryRequest->requested_start_time)
+            ->orderBy('start_time')
+            ->get();
+
+        if ($conflictingSchedules->isEmpty()) {
+            return;
+        }
+
+        $surgeryRequest->loadMissing(['patient', 'requestedDoctor.user']);
+        $doctorUser = $surgeryRequest->requestedDoctor?->user;
+
+        if (! $doctorUser) {
+            return;
+        }
+
+        UserNotification::create([
+            'user_id' => $doctorUser->id,
+            'title' => 'Jadwal dokter bentrok',
+            'message' => sprintf(
+                'Pengajuan operasi pasien %s pada %s pukul %s-%s bentrok dengan jadwal dokter yang sudah ada.',
+                $surgeryRequest->patient?->name ?? '-',
+                $surgeryRequest->requested_date?->format('d M Y') ?? '-',
+                substr((string) $surgeryRequest->requested_start_time, 0, 5),
+                substr((string) $surgeryRequest->requested_end_time, 0, 5),
+            ),
+        ]);
+
+        try {
+            Mail::to($doctorUser->email)->send(
+                new DoctorScheduleConflictMail($surgeryRequest, $conflictingSchedules)
+            );
+        } catch (\Throwable $exception) {
+            Log::warning('Gagal mengirim email bentrok jadwal dokter.', [
+                'surgery_request_id' => $surgeryRequest->id,
+                'doctor_user_id' => $doctorUser->id,
+                'error' => $exception->getMessage(),
+            ]);
+        }
     }
 
     private function storeUploadedFile(string $field): ?string

@@ -49,19 +49,19 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        $ukNurseUser = User::firstOrCreate(
-            ['email' => 'perawat.uk@gmail.com'],
+        $okNurseUser = User::firstOrCreate(
+            ['email' => 'perawat.ok@gmail.com'],
             [
-                'name' => 'Perawat UK Demo',
+                'name' => 'Perawat OK Demo',
                 'password' => Hash::make('password'),
-                'role' => User::ROLE_PERAWAT_UK,
+                'role' => User::ROLE_PERAWAT_OK,
             ]
         );
 
         Nurse::firstOrCreate(
-            ['user_id' => $ukNurseUser->id],
+            ['user_id' => $okNurseUser->id],
             [
-                'nurse_type' => User::ROLE_PERAWAT_UK,
+                'nurse_type' => User::ROLE_PERAWAT_OK,
                 'origin_unit' => null,
             ]
         );

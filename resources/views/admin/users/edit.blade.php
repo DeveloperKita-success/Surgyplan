@@ -56,7 +56,7 @@
                                 <option value="{{ $role }}" {{ old('role', $userItem->role) === $role ? 'selected' : '' }}>
                                     {{ match ($role) {
                                         \App\Models\User::ROLE_DOKTER => 'Dokter',
-                                        \App\Models\User::ROLE_PERAWAT_UK => 'Perawat OK',
+                                        \App\Models\User::ROLE_PERAWAT_OK => 'Perawat OK',
                                         \App\Models\User::ROLE_PERAWAT_BIASA => 'Perawat Reguler',
                                         default => 'Pengguna',
                                     } }}
@@ -160,7 +160,7 @@
 
             <div
                 class="rounded-lg border border-slate-200 bg-white p-6 shadow-sm"
-                x-show="role === 'perawat_uk' || role === 'perawat_biasa'"
+                x-show="role === 'perawat_ok' || role === 'perawat_biasa'"
                 x-transition
             >
                 <h2 class="text-sm font-semibold text-slate-700">Data Perawat</h2>
@@ -185,7 +185,7 @@
                         @enderror
                     </div>
 
-                    <p class="text-xs text-slate-500" x-show="role === 'perawat_uk'">
+                    <p class="text-xs text-slate-500" x-show="role === 'perawat_ok'">
                         Perawat OK tidak memiliki unit asal.
                     </p>
                 </div>

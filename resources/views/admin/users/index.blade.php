@@ -11,7 +11,7 @@
             @foreach ([
                 ['label' => 'Total User', 'value' => $summary['total'] ?? 0],
                 ['label' => 'Dokter', 'value' => $summary['doctor'] ?? 0],
-                ['label' => 'Perawat OK', 'value' => $summary['nurse_uk'] ?? 0],
+                ['label' => 'Perawat OK', 'value' => $summary['nurse_ok'] ?? 0],
                 ['label' => 'Perawat Reguler', 'value' => $summary['nurse_regular'] ?? 0],
             ] as $stat)
                 <div class="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">

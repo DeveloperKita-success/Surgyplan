@@ -180,7 +180,7 @@
                                     @enderror
                                 </label>
 
-                                
+
                             </div>
 
                         </div>
@@ -719,7 +719,7 @@
             </form>
         </div>
 
-        <aside class="space-y-6 xl:sticky xl:top-6 xl:self-start">
+        <aside class="space-y-6 xl:sticky xl:top-20 xl:self-start">
             <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
                 <h2 class="text-lg font-semibold text-slate-900">Ringkasan Flow</h2>
                 <ol class="mt-4 space-y-3 text-sm text-slate-600">

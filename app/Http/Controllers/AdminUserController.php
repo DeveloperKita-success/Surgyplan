@@ -23,7 +23,7 @@ class AdminUserController extends Controller
     {
         return [
             User::ROLE_DOKTER,
-            User::ROLE_PERAWAT_UK,
+            User::ROLE_PERAWAT_OK,
             User::ROLE_PERAWAT_BIASA,
         ];
     }
@@ -67,7 +67,7 @@ class AdminUserController extends Controller
             ->map(function (User $userItem) use ($onlineUserIds) {
                 $roleLabel = match ($userItem->role) {
                     User::ROLE_DOKTER => 'Dokter',
-                    User::ROLE_PERAWAT_UK => 'Perawat OK',
+                    User::ROLE_PERAWAT_OK => 'Perawat OK',
                     User::ROLE_PERAWAT_BIASA => 'Perawat Reguler',
                     User::ROLE_ADMIN => 'Admin',
                     default => 'Pengguna',
@@ -86,7 +86,7 @@ class AdminUserController extends Controller
         $summary = [
             'total' => $users->count(),
             'doctor' => $users->where('role', 'Dokter')->count(),
-            'nurse_uk' => $users->where('role', 'Perawat OK')->count(),
+            'nurse_ok' => $users->where('role', 'Perawat OK')->count(),
             'nurse_regular' => $users->where('role', 'Perawat Reguler')->count(),
         ];
 
@@ -119,10 +119,10 @@ class AdminUserController extends Controller
             'str_number' => [Rule::requiredIf($request->role === User::ROLE_DOKTER), 'nullable', 'string', 'max:255'],
             'title' => [Rule::requiredIf($request->role === User::ROLE_DOKTER), 'nullable', 'string', 'max:255'],
             'sip_number' => [Rule::requiredIf($request->role === User::ROLE_DOKTER), 'nullable', 'string', 'max:255'],
-            'nurse_is_uk' => [Rule::requiredIf($request->role === 'perawat'), 'nullable', 'boolean'],
+            'nurse_is_ok' => [Rule::requiredIf($request->role === 'perawat'), 'nullable', 'boolean'],
             'origin_unit' => [
                 Rule::requiredIf(
-                    $request->role === 'perawat' && !$request->boolean('nurse_is_uk')
+                    $request->role === 'perawat' && !$request->boolean('nurse_is_ok')
                 ),
                 'nullable',
                 Rule::in(['Bangsal', 'IGD', 'Poli']),
@@ -131,7 +131,7 @@ class AdminUserController extends Controller
 
         $roleToStore = $validated['role'] === User::ROLE_DOKTER
             ? User::ROLE_DOKTER
-            : ($request->boolean('nurse_is_uk') ? User::ROLE_PERAWAT_UK : User::ROLE_PERAWAT_BIASA);
+            : ($request->boolean('nurse_is_ok') ? User::ROLE_PERAWAT_OK : User::ROLE_PERAWAT_BIASA);
 
         $user = User::create([
             'name' => $validated['name'],
@@ -150,7 +150,7 @@ class AdminUserController extends Controller
             ]);
         }
 
-        if ($user && in_array($roleToStore, [User::ROLE_PERAWAT_UK, User::ROLE_PERAWAT_BIASA], true)) {
+        if ($user && in_array($roleToStore, [User::ROLE_PERAWAT_OK, User::ROLE_PERAWAT_BIASA], true)) {
             Nurse::create([
                 'user_id' => $user->id,
                 'nurse_type' => $roleToStore,
@@ -234,7 +234,7 @@ class AdminUserController extends Controller
             Nurse::where('user_id', $user->id)->delete();
         }
 
-        if (in_array($validated['role'], [User::ROLE_PERAWAT_UK, User::ROLE_PERAWAT_BIASA], true)) {
+        if (in_array($validated['role'], [User::ROLE_PERAWAT_OK, User::ROLE_PERAWAT_BIASA], true)) {
             $nurse = Nurse::firstOrNew(['user_id' => $user->id]);
             $nurse->nurse_type = $validated['role'];
             $nurse->origin_unit = $validated['role'] === User::ROLE_PERAWAT_BIASA ? $validated['origin_unit'] : null;
@@ -287,7 +287,7 @@ class AdminUserController extends Controller
         DB::transaction(function () use ($user): void {
             $user->notifications()->delete();
             $user->surgeryHistories()->delete();
-            $user->ukVerificationChecklists()->delete();
+            $user->okVerificationChecklists()->delete();
             $user->guidelines()->delete();
 
             $user->doctor()?->delete();
