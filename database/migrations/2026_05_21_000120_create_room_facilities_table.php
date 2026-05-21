@@ -8,19 +8,17 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('operating_rooms', function (Blueprint $table): void {
+        Schema::create('room_facilities', function (Blueprint $table): void {
             $table->id();
-            $table->string('room_code');
-            $table->string('room_name');
-            $table->unsignedInteger('capacity');
+            $table->foreignId('operating_room_id')->constrained('operating_rooms')->cascadeOnDelete();
+            $table->string('name');
             $table->text('description')->nullable();
-            $table->string('status');
             $table->timestamps();
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('operating_rooms');
+        Schema::dropIfExists('room_facilities');
     }
 };

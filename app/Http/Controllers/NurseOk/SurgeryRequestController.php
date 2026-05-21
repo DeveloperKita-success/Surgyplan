@@ -4,10 +4,8 @@ namespace App\Http\Controllers\NurseOk;
 
 use App\Http\Controllers\Controller;
 use App\Models\Doctor;
-use App\Models\OperatingRoom;
 use App\Models\SurgeryHistory;
 use App\Models\SurgeryRequest;
-use App\Models\SurgerySchedule;
 use App\Models\OkVerificationChecklist;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
@@ -57,19 +55,6 @@ class SurgeryRequestController extends Controller
                 'okVerificationChecklist',
                 'surgerySchedules.operatingRoom',
             ]),
-            'rooms' => OperatingRoom::query()
-                ->with([
-                    'specialist',
-                    'surgerySchedules' => fn ($query) => $query
-                        ->whereDate('surgery_date', $surgeryRequest->requested_date)
-                        ->where('schedule_status', 'scheduled'),
-                ])
-                ->orderBy('room_name')
-                ->get(),
-            'doctors' => Doctor::query()
-                ->with(['user', 'specialist'])
-                ->orderBy('id')
-                ->get(),
         ]);
     }
 
@@ -87,13 +72,11 @@ class SurgeryRequestController extends Controller
             'anesthesia_type' => ['required', 'in:General Anesthesia / Anestesi Umum,Regional Anesthesia / Anestesi Regional,Spinal Anesthesia / Anestesi Spinal,Epidural Anesthesia / Anestesi Epidural,Local Anesthesia / Anestesi Lokal,Sedation / Sedasi,Lainnya'],
             'anesthesia_type_other' => ['nullable', 'required_if:anesthesia_type,Lainnya', 'string', 'max:255'],
             'asa_status' => ['required', 'in:ASA I,ASA II,ASA III,ASA IV,ASA V,ASA VI,Emergency'],
+            'anesthesia_approved' => ['nullable', 'boolean'],
+            'doctor_anesthesia_approved' => ['nullable', 'boolean'],
             'anesthesia_note' => ['nullable', 'string'],
             'verification_note' => ['nullable', 'string'],
-            'decision' => ['required', 'in:disetujui,ditolak,ditunda'],
-            'doctor_id' => ['nullable', 'required_if:decision,disetujui', 'exists:doctors,id'],
-            'operating_room_id' => ['nullable', 'required_if:decision,disetujui', 'exists:operating_rooms,id'],
-            'end_time' => ['nullable', 'required_if:decision,disetujui', 'date_format:H:i'],
-            'reason' => ['nullable', 'required_if:decision,ditolak,ditunda', 'string'],
+            'decision' => ['required', 'in:disetujui,ditunda'],
         ]);
 
         DB::transaction(function () use ($validated, $request, $surgeryRequest): void {
@@ -114,7 +97,8 @@ class SurgeryRequestController extends Controller
                         ? $validated['anesthesia_type_other']
                         : $validated['anesthesia_type'],
                     'asa_status' => $validated['asa_status'],
-                    'anesthesia_approved' => true,
+                    'anesthesia_approved' => (bool) ($validated['anesthesia_approved'] ?? false),
+                    'doctor_anesthesia_approved' => (bool) ($validated['doctor_anesthesia_approved'] ?? false),
                     'anesthesia_note' => $validated['anesthesia_note'] ?? null,
                     'verification_note' => $validated['verification_note'] ?? null,
                 ],
@@ -123,31 +107,14 @@ class SurgeryRequestController extends Controller
             $oldStatus = $surgeryRequest->request_status;
             $surgeryRequest->update([
                 'request_status' => $validated['decision'],
-                'requested_doctor_id' => $validated['doctor_id'] ?? $surgeryRequest->requested_doctor_id,
             ]);
-
-            if ($validated['decision'] === 'disetujui') {
-                SurgerySchedule::updateOrCreate(
-                    ['surgery_request_id' => $surgeryRequest->id],
-                    [
-                        'patient_id' => $surgeryRequest->patient_id,
-                        'doctor_id' => $validated['doctor_id'],
-                        'operating_room_id' => $validated['operating_room_id'],
-                        'approved_by' => $request->user()->id,
-                        'surgery_date' => $surgeryRequest->requested_date,
-                        'start_time' => $surgeryRequest->requested_start_time,
-                        'end_time' => $validated['end_time'],
-                        'schedule_status' => 'scheduled',
-                    ],
-                );
-            }
 
             SurgeryHistory::create([
                 'surgery_request_id' => $surgeryRequest->id,
                 'changed_by' => $request->user()->id,
                 'old_status' => $oldStatus,
                 'new_status' => $validated['decision'],
-                'note' => $validated['reason'] ?? 'Verifikasi Perawat OK selesai.',
+                'note' => $validated['verification_note'] ?? 'Verifikasi Perawat OK selesai.',
             ]);
         });
 

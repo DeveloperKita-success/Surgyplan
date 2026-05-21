@@ -26,7 +26,7 @@
                         <span class="text-sm font-medium text-slate-600">Umur</span>
                         <input name="age" value="{{ old('age', $surgeryRequest->patient->age) }}" class="w-full rounded-lg border-slate-200 text-sm focus:border-cyan-600 focus:ring-cyan-600">
                     </label>
-                    <label class="space-y-2" x-data="icdAutocomplete('icd10')">
+                    <label class="space-y-2" x-data="icdAutocomplete('icd10', @js(old('diagnosis_text', $surgeryRequest->diagnosis_text)))">
                         <span class="text-sm font-medium text-slate-600">Diagnosis ICD-10</span>
                         <div class="relative">
                             <input type="text" name="diagnosis_text" x-model="query"
@@ -57,7 +57,7 @@
                         </div>
                         @error('diagnosis_text') <span class="text-sm text-rose-600">{{ $message }}</span> @enderror
                     </label>
-                    <label class="space-y-2" x-data="icdAutocomplete('icd9')">
+                    <label class="space-y-2" x-data="icdAutocomplete('icd9', @js(old('procedure_text', $surgeryRequest->procedure_text)))">
                         <span class="text-sm font-medium text-slate-600">Tindakan ICD-9 CM</span>
                         <div class="relative">
                             <input type="text" name="procedure_text" x-model="query"
@@ -147,10 +147,6 @@
                     <label class="space-y-2">
                         <span class="text-sm font-medium text-slate-600">Jam Operasi</span>
                         <input type="time" name="requested_start_time" value="{{ old('requested_start_time', $surgeryRequest->requested_start_time) }}" class="w-full rounded-lg border-slate-200 text-sm focus:border-cyan-600 focus:ring-cyan-600">
-                    </label>
-                    <label class="space-y-2">
-                        <span class="text-sm font-medium text-slate-600">Estimasi Resiko</span>
-                        <input name="risk_estimation" value="{{ old('risk_estimation', $surgeryRequest->risk_estimation) }}" class="w-full rounded-lg border-slate-200 text-sm focus:border-cyan-600 focus:ring-cyan-600" placeholder="Contoh: ASA II, risiko sedang">
                     </label>
                     <label class="space-y-2 md:col-span-2">
                         <span class="text-sm font-medium text-slate-600">Catatan Pengajuan</span>

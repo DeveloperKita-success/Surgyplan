@@ -21,6 +21,7 @@ class OkVerificationChecklist extends Model
         'anesthesia_type',
         'asa_status',
         'anesthesia_approved',
+        'doctor_anesthesia_approved',
         'anesthesia_note',
         'verification_note',
     ];
@@ -30,6 +31,7 @@ class OkVerificationChecklist extends Model
         'doctor_present' => 'bool',
         'operating_room_ready' => 'bool',
         'anesthesia_approved' => 'bool',
+        'doctor_anesthesia_approved' => 'bool',
     ];
 
     public function surgeryRequest(): BelongsTo

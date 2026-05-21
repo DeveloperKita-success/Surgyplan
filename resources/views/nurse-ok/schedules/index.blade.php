@@ -22,16 +22,34 @@
             12 => 'Desember',
         ];
         $dayNames = ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'];
+        $selectedMonth = (int) ($month ?? now()->month);
     @endphp
 
     <div class="space-y-6">
+        @if (session('status'))
+            <div class="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-800">
+                {{ session('status') }}
+            </div>
+        @endif
+
+        @if ($errors->any())
+            <div class="rounded-lg border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800">
+                <p class="font-semibold">Data gagal disimpan.</p>
+                <ul class="mt-2 list-disc space-y-1 pl-5">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
         <section class="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
             <form method="GET" action="{{ route('nurse-ok.schedules.index') }}" class="grid gap-3 md:grid-cols-[220px_160px_auto] md:items-end">
                 <div>
                     <label for="month" class="text-sm font-semibold text-slate-700">Bulan</label>
                     <select id="month" name="month" class="mt-2 w-full rounded-lg border-slate-200 text-sm focus:border-cyan-600 focus:ring-cyan-600">
                         @foreach ($monthNames as $monthNumber => $monthName)
-                            <option value="{{ $monthNumber }}" @selected($month === $monthNumber)>{{ $monthName }}</option>
+                            <option value="{{ $monthNumber }}" @selected($selectedMonth === $monthNumber)>{{ $monthName }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -56,7 +74,7 @@
                 <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 px-5 py-4">
                     <div>
                         <p class="text-sm text-slate-500">Kalender operasi disetujui</p>
-                        <h2 class="text-lg font-semibold text-slate-900">{{ $monthNames[$month] }} {{ $year }}</h2>
+                        <h2 class="text-lg font-semibold text-slate-900">{{ $monthNames[$selectedMonth] }} {{ $year }}</h2>
                     </div>
                     <div class="flex gap-2 text-xs font-semibold text-slate-600">
                         <span class="rounded-md bg-cyan-50 px-2.5 py-1 text-cyan-700">Ada jadwal</span>
@@ -76,7 +94,7 @@
                             @php
                                 $isSelected = $day['date']->isSameDay($selectedDate);
                                 $dayUrl = route('nurse-ok.schedules.index', [
-                                    'month' => $month,
+                                    'month' => $selectedMonth,
                                     'year' => $year,
                                     'date' => $day['date']->toDateString(),
                                 ]);
@@ -170,7 +188,10 @@
                             <div class="flex items-center justify-between gap-3 px-5 py-3 text-sm">
                                 <div>
                                     <p class="font-semibold text-slate-900">{{ $room->room_name }}</p>
-                                    <p class="text-slate-500">{{ $room->room_code }} · {{ $room->specialist?->name ?? 'Umum' }}</p>
+                                    <p class="text-slate-500">{{ $room->room_code }} · Kapasitas {{ $room->capacity }}</p>
+                                    @if ($room->description)
+                                        <p class="mt-1 text-slate-500">{{ $room->description }}</p>
+                                    @endif
                                 </div>
                                 <span class="rounded-md bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700">Siap</span>
                             </div>

@@ -243,10 +243,6 @@
                         <span class="text-sm font-medium text-slate-600">Jam Operasi</span>
                         <input type="time" name="requested_start_time" value="{{ old('requested_start_time') }}" class="w-full rounded-lg border-slate-200 text-sm focus:border-cyan-600 focus:ring-cyan-600">
                     </label>
-                    <label class="space-y-2">
-                        <span class="text-sm font-medium text-slate-600">Estimasi Resiko</span>
-                        <input name="risk_estimation" value="{{ old('risk_estimation') }}" class="w-full rounded-lg border-slate-200 text-sm focus:border-cyan-600 focus:ring-cyan-600" placeholder="Contoh: ASA II, risiko sedang">
-                    </label>
                     <label class="space-y-2 md:col-span-2">
                         <span class="text-sm font-medium text-slate-600">Catatan Pengajuan</span>
                         <textarea name="notes" rows="3" class="w-full rounded-lg border-slate-200 text-sm focus:border-cyan-600 focus:ring-cyan-600">{{ old('notes') }}</textarea>

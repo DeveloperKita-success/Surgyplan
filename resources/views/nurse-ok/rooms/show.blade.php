@@ -23,9 +23,28 @@
             <dl class="mt-5 grid gap-4 text-sm sm:grid-cols-2">
                 <div><dt class="text-slate-500">Kode</dt><dd class="font-semibold text-slate-900">{{ $room->room_code }}</dd></div>
                 <div><dt class="text-slate-500">Nama Kamar</dt><dd class="font-semibold text-slate-900">{{ $room->room_name }}</dd></div>
-                <div><dt class="text-slate-500">Spesialis</dt><dd class="font-semibold text-slate-900">{{ $room->specialist?->name ?? '-' }}</dd></div>
+                <div><dt class="text-slate-500">Kapasitas</dt><dd class="font-semibold text-slate-900">{{ $room->capacity }}</dd></div>
+                <div><dt class="text-slate-500">Keterangan</dt><dd class="font-semibold text-slate-900">{{ $room->description ?? '-' }}</dd></div>
                 <div><dt class="text-slate-500">Status</dt><dd class="font-semibold text-slate-900">{{ ucfirst($room->status) }}</dd></div>
             </dl>
+        </section>
+
+        <section class="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
+            <div class="border-b border-slate-200 px-5 py-4">
+                <h2 class="text-lg font-semibold text-slate-900">Fasilitas Ruang</h2>
+            </div>
+            <div class="divide-y divide-slate-100">
+                @forelse ($room->facilities as $facility)
+                    <div class="px-5 py-4">
+                        <p class="font-semibold text-slate-900">{{ $facility->name }}</p>
+                        <p class="mt-1 text-sm text-slate-500">{{ $facility->description ?? '-' }}</p>
+                    </div>
+                @empty
+                    <div class="px-5 py-8 text-center text-sm text-slate-500">
+                        Belum ada fasilitas untuk kamar ini.
+                    </div>
+                @endforelse
+            </div>
         </section>
 
         <section class="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">

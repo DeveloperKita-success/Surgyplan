@@ -35,12 +35,17 @@
 
             @if ($errors->any())
                 <div class="rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">
-                    Ada data yang belum lengkap. Periksa kembali kolom yang ditandai.
+                    <p class="font-semibold">Ada data yang belum lengkap. Periksa kembali kolom berikut:</p>
+                    <ul class="mt-2 list-disc space-y-1 pl-5">
+                        @foreach ($errors->all() as $message)
+                            <li>{{ $message }}</li>
+                        @endforeach
+                    </ul>
                 </div>
             @endif
 
             <form action="{{ route('nurse-regular.surgery-requests.store') }}" method="POST" enctype="multipart/form-data"
-                class="space-y-">
+                class="space-y-6">
                 @csrf
                 <div class="space-y-6">
 
@@ -180,7 +185,6 @@
                                     @enderror
                                 </label>
 
-
                             </div>
 
                         </div>
@@ -195,7 +199,7 @@
 
                         <div class="mt-6 grid gap-4">
                             <div class="grid gap-4">
-                                <label class="space-y-2" x-data="icdAutocomplete('icd10')">
+                                <label class="space-y-2" x-data="icdAutocomplete('icd10', @js(old('diagnosis_text', '')))">
                                     <span class="text-sm font-semibold text-slate-700">Diagnosa (ICD-10)</span>
                                     <div class="relative">
                                         <input type="text" name="diagnosis_text" x-model="query"
@@ -230,7 +234,7 @@
                                     @enderror
                                 </label>
 
-                                <label class="space-y-2" x-data="icdAutocomplete('icd9')">
+                                <label class="space-y-2" x-data="icdAutocomplete('icd9', @js(old('procedure_text', '')))">
                                     <span class="text-sm font-semibold text-slate-700">Tindakan (ICD-9-CM)</span>
                                     <div class="relative">
                                         <input type="text" name="procedure_text" x-model="query"
@@ -443,7 +447,7 @@
                                 </div>
 
                                 <label class="space-y-2 rounded-2xl border border-slate-200 p-4">
-                                    <span class="text-sm font-semibold text-slate-700">Estimasi resiko</span>
+                                    <span class="text-sm font-semibold text-slate-700">Estimasi Risiko Anestesi</span>
                                     <input type="text" name="anesthesia_risk_estimation"
                                         value="{{ old('anesthesia_risk_estimation') }}"
                                         class="w-full rounded-[10px] border-slate-200 text-sm focus:border-cyan-600 focus:ring-cyan-600"

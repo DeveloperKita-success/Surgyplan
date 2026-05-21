@@ -53,6 +53,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/surgery-requests/{surgeryRequest}', [NurseOkSurgeryRequestController::class, 'show'])->name('requests.show');
         Route::post('/surgery-requests/{surgeryRequest}/decision', [NurseOkSurgeryRequestController::class, 'decide'])->name('requests.decide');
         Route::get('/surgery-schedules', [NurseOkOperationScheduleController::class, 'index'])->name('schedules.index');
+        Route::get('/operating-rooms/patient-scheduling/create', [NurseOkOperatingRoomController::class, 'createPatientScheduling'])->name('rooms.patient-scheduling.create');
+        Route::post('/operating-rooms/patient-scheduling', [NurseOkOperatingRoomController::class, 'storePatientScheduling'])->name('rooms.patient-scheduling.store');
         Route::resource('/operating-rooms', NurseOkOperatingRoomController::class)
             ->parameters(['operating-rooms' => 'operatingRoom'])
             ->names('rooms');
@@ -77,7 +79,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     Route::resource('patients', PatientController::class);
-
     Route::get('/api/icd/search', [IcdApiController::class, 'search'])->name('api.icd.search');
 
     // Route::resource('guidelines', GuidelineController::class)->only(['index', 'store', 'destroy']);

@@ -34,9 +34,14 @@
                 </div>
             </form>
 
-            <a href="{{ route('nurse-ok.rooms.create') }}" class="rounded-lg bg-cyan-700 px-4 py-2.5 text-sm font-semibold text-white hover:bg-cyan-800">
-                Tambah Kamar
-            </a>
+            <div class="flex flex-wrap items-center gap-2">
+                <a href="{{ route('nurse-ok.rooms.create') }}" class="rounded-lg bg-cyan-700 px-4 py-2.5 text-sm font-semibold text-white hover:bg-cyan-800">
+                    Tambah Kamar
+                </a>
+                <a href="{{ route('nurse-ok.rooms.patient-scheduling.create') }}" class="rounded-lg border border-cyan-200 bg-white px-4 py-2.5 text-sm font-semibold text-cyan-700 hover:bg-cyan-50">
+                    Penjadwalan Pasien
+                </a>
+            </div>
         </div>
 
         <section class="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
@@ -46,7 +51,8 @@
                         <tr>
                             <th class="px-5 py-3 font-medium">Kode</th>
                             <th class="px-5 py-3 font-medium">Nama Kamar</th>
-                            <th class="px-5 py-3 font-medium">Spesialis</th>
+                            <th class="px-5 py-3 font-medium">Kapasitas</th>
+                            <th class="px-5 py-3 font-medium">Keterangan</th>
                             <th class="px-5 py-3 font-medium">Status</th>
                             <th class="px-5 py-3 font-medium text-right">Aksi</th>
                         </tr>
@@ -56,7 +62,8 @@
                             <tr>
                                 <td class="px-5 py-4 font-semibold text-slate-900">{{ $room->room_code }}</td>
                                 <td class="px-5 py-4 text-slate-600">{{ $room->room_name }}</td>
-                                <td class="px-5 py-4 text-slate-600">{{ $room->specialist?->name ?? '-' }}</td>
+                                <td class="px-5 py-4 text-slate-600">{{ $room->capacity }}</td>
+                                <td class="px-5 py-4 text-slate-600">{{ $room->description ?? '-' }}</td>
                                 <td class="px-5 py-4">
                                     <span class="rounded-md bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-700">{{ ucfirst($room->status) }}</span>
                                 </td>
@@ -74,7 +81,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="px-5 py-8 text-center text-slate-500">Belum ada kamar operasi.</td>
+                                <td colspan="6" class="px-5 py-8 text-center text-slate-500">Belum ada kamar operasi.</td>
                             </tr>
                         @endforelse
                     </tbody>

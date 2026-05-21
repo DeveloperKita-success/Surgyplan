@@ -83,6 +83,7 @@ it('allows only regular nurses to create surgery requests', function () {
         'requested_by' => $regularNurse->id,
         'request_status' => 'menunggu',
         'patient_priority' => 'Urgent',
+        'requested_doctor_id' => $doctor->id,
     ]);
 
     $this->actingAs($okNurse)

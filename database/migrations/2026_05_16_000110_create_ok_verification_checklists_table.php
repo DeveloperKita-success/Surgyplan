@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('anesthesia_type')->nullable();
             $table->string('asa_status')->nullable();
             $table->boolean('anesthesia_approved');
+            $table->boolean('doctor_anesthesia_approved')->default(false);
             $table->text('anesthesia_note')->nullable();
             $table->text('verification_note')->nullable();
             $table->timestamps();
