@@ -1,6 +1,7 @@
 <?php
 
 use App\Mail\DoctorScheduleConflictMail;
+use App\Mail\SurgeryRequestSubmittedMail;
 use App\Models\Doctor;
 use App\Models\OperatingRoom;
 use App\Models\Specialist;
@@ -228,4 +229,37 @@ it('emails doctors when a new surgery request conflicts with their schedule', fu
         'title' => 'Jadwal dokter bentrok',
         'is_read' => false,
     ]);
+});
+
+it('emails all ok nurses when regular nurses submit surgery requests', function () {
+    Mail::fake();
+
+    $specialist = Specialist::create(['name' => 'Bedah Umum']);
+    $doctorUser = User::factory()->create(['role' => User::ROLE_DOKTER]);
+    $doctor = Doctor::create([
+        'user_id' => $doctorUser->id,
+        'specialist_id' => $specialist->id,
+        'title' => 'dr.',
+        'str_number' => 'STR-4',
+        'sip_number' => 'SIP-4',
+    ]);
+    $regularNurse = User::factory()->create(['role' => User::ROLE_PERAWAT_BIASA]);
+    $firstOkNurse = User::factory()->create(['role' => User::ROLE_PERAWAT_OK]);
+    $secondOkNurse = User::factory()->create(['role' => User::ROLE_PERAWAT_OK]);
+
+    $this->actingAs($regularNurse)
+        ->post(route('nurse-regular.surgery-requests.store'), surgeryRequestPayload($doctor))
+        ->assertRedirect(route('nurse-regular.surgery-requests.index'));
+
+    Mail::assertSent(SurgeryRequestSubmittedMail::class, function (SurgeryRequestSubmittedMail $mail) use ($firstOkNurse) {
+        return $mail->hasTo($firstOkNurse->email)
+            && $mail->surgeryRequest->patient?->name === 'Budi Santoso';
+    });
+
+    Mail::assertSent(SurgeryRequestSubmittedMail::class, function (SurgeryRequestSubmittedMail $mail) use ($secondOkNurse) {
+        return $mail->hasTo($secondOkNurse->email)
+            && $mail->surgeryRequest->patient?->name === 'Budi Santoso';
+    });
+
+    Mail::assertSent(SurgeryRequestSubmittedMail::class, 2);
 });

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\NurseRegular;
 
 use App\Http\Controllers\Controller;
 use App\Mail\DoctorScheduleConflictMail;
+use App\Mail\SurgeryRequestSubmittedMail;
 use App\Models\Doctor;
 use App\Models\Guideline;
 use App\Models\Patient;
@@ -177,11 +178,40 @@ class SurgeryRequestController extends Controller
             return $surgeryRequest;
         });
 
+        $this->notifyOkNursesAboutNewRequest($surgeryRequest);
         $this->notifyDoctorIfScheduleConflict($surgeryRequest);
 
         return redirect()
             ->route('nurse-regular.surgery-requests.index')
             ->with('status', 'Pengajuan operasi ruang berhasil disimpan.');
+    }
+
+    private function notifyOkNursesAboutNewRequest(SurgeryRequest $surgeryRequest): void
+    {
+        $okNurses = User::query()
+            ->where('role', User::ROLE_PERAWAT_OK)
+            ->whereNotNull('email')
+            ->get();
+
+        if ($okNurses->isEmpty()) {
+            return;
+        }
+
+        $surgeryRequest->loadMissing(['patient', 'requestedDoctor.user']);
+
+        foreach ($okNurses as $okNurse) {
+            try {
+                Mail::to($okNurse->email)->send(
+                    new SurgeryRequestSubmittedMail($surgeryRequest)
+                );
+            } catch (\Throwable $exception) {
+                Log::warning('Gagal mengirim email pengajuan operasi baru ke perawat OK.', [
+                    'surgery_request_id' => $surgeryRequest->id,
+                    'ok_nurse_user_id' => $okNurse->id,
+                    'error' => $exception->getMessage(),
+                ]);
+            }
+        }
     }
 
     private function notifyDoctorIfScheduleConflict(SurgeryRequest $surgeryRequest): void
@@ -306,8 +336,6 @@ class SurgeryRequestController extends Controller
         ]);
     }
 
-
-
     public function update(Request $request, SurgeryRequest $surgeryRequest): RedirectResponse
     {
         $this->ensureEditableByRegularNurse($request->user(), $surgeryRequest);
@@ -392,7 +420,7 @@ class SurgeryRequestController extends Controller
         $patientId = $surgeryRequest?->patient_id;
 
         return $request->validate([
-            'medical_record_number' => ['required', 'string', 'max:255', 'unique:patients,medical_record_number,' . ($patientId ?? 'NULL')],
+            'medical_record_number' => ['required', 'string', 'max:255', 'unique:patients,medical_record_number,'.($patientId ?? 'NULL')],
             'patient_name' => ['required', 'string', 'max:255'],
             'birth_date' => ['nullable', 'date'],
             'age' => ['nullable', 'integer', 'min:0', 'max:150'],

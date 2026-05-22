@@ -1,6 +1,7 @@
 <?php
 
 use App\Mail\DoctorScheduleCreatedMail;
+use App\Mail\SurgeryRequestApprovedMail;
 use App\Models\Doctor;
 use App\Models\OkVerificationChecklist;
 use App\Models\OperatingRoom;
@@ -53,7 +54,15 @@ function createOkRequestFixture(): array
 }
 
 it('lets ok nurses review and approve surgery requests', function () {
-    ['okNurse' => $okNurse, 'doctor' => $doctor, 'request' => $request, 'room' => $room] = createOkRequestFixture();
+    Mail::fake();
+
+    [
+        'okNurse' => $okNurse,
+        'doctorUser' => $doctorUser,
+        'doctor' => $doctor,
+        'request' => $request,
+        'room' => $room,
+    ] = createOkRequestFixture();
 
     $this->actingAs($okNurse)
         ->get(route('nurse-ok.requests.index'))
@@ -75,6 +84,7 @@ it('lets ok nurses review and approve surgery requests', function () {
             'anesthesia_type' => 'General Anesthesia / Anestesi Umum',
             'asa_status' => 'ASA II',
             'decision' => 'disetujui',
+            'requested_doctor_id' => $doctor->id,
             'doctor_id' => $doctor->id,
             'operating_room_id' => $room->id,
             'end_time' => '12:00',
@@ -84,7 +94,13 @@ it('lets ok nurses review and approve surgery requests', function () {
     $this->assertDatabaseHas('surgery_requests', [
         'id' => $request->id,
         'request_status' => 'disetujui',
+        'requested_doctor_id' => $doctor->id,
     ]);
+
+    Mail::assertSent(SurgeryRequestApprovedMail::class, function (SurgeryRequestApprovedMail $mail) use ($doctorUser) {
+        return $mail->hasTo($doctorUser->email)
+            && $mail->surgeryRequest->request_status === 'disetujui';
+    });
 });
 
 it('blocks non ok nurses from reviewing surgery requests', function () {
@@ -93,6 +109,25 @@ it('blocks non ok nurses from reviewing surgery requests', function () {
     $this->actingAs($doctorUser)
         ->get(route('nurse-ok.requests.show', $request))
         ->assertForbidden();
+});
+
+it('requires ok nurses to choose a doctor when reviewing surgery requests', function () {
+    ['okNurse' => $okNurse, 'request' => $request] = createOkRequestFixture();
+
+    $this->withSession(['_token' => 'test-token'])
+        ->actingAs($okNurse)
+        ->from(route('nurse-ok.requests.show', $request))
+        ->post(route('nurse-ok.requests.decide', $request), [
+            '_token' => 'test-token',
+            'patient_wristband_installed' => '1',
+            'doctor_present' => '1',
+            'oxygen_saturation' => '95%-100% (Normal)',
+            'anesthesia_type' => 'General Anesthesia / Anestesi Umum',
+            'asa_status' => 'ASA II',
+            'decision' => 'ditunda',
+        ])
+        ->assertRedirect(route('nurse-ok.requests.show', $request))
+        ->assertSessionHasErrors(['requested_doctor_id']);
 });
 
 it('emails doctors when ok nurses create surgery schedules', function () {

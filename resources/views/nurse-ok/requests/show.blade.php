@@ -36,6 +36,13 @@
         ];
         $selectedAnesthesiaType = old('anesthesia_type', in_array($verification?->anesthesia_type, $anesthesiaOptions, true) ? $verification?->anesthesia_type : ($verification?->anesthesia_type ? 'Lainnya' : null));
         $otherAnesthesiaType = old('anesthesia_type_other', $selectedAnesthesiaType === 'Lainnya' ? $verification?->anesthesia_type : '');
+        $doctorOptions = $doctors->map(fn ($doctor) => [
+            'id' => (string) $doctor->id,
+            'name' => trim(($doctor->title ? $doctor->title.' ' : '').($doctor->user?->name ?? 'Dokter')),
+            'specialist' => $doctor->specialist?->name ?? '-',
+            'str_number' => $doctor->str_number ?? '-',
+        ])->values();
+        $selectedDoctorId = (string) old('requested_doctor_id', $surgeryRequest->requested_doctor_id);
         $verificationItems = [
             ['name' => 'patient_wristband_installed', 'title' => 'Gelang pasien sudah terpasang', 'description' => 'Identitas pasien dikonfirmasi dengan benar.', 'checked' => $verification?->patient_wristband_installed],
             ['name' => 'doctor_present', 'title' => 'Kehadiran dokter', 'description' => 'Dokter penanggung jawab telah hadir.', 'checked' => $verification?->doctor_present],
@@ -73,6 +80,17 @@
         @if (session('status'))
             <div class="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-800">
                 {{ session('status') }}
+            </div>
+        @endif
+
+        @if ($errors->any())
+            <div class="rounded-xl border border-rose-200 bg-rose-50 px-4 py-4 text-sm text-rose-800">
+                <p class="font-bold">ACC belum bisa disimpan. Lengkapi bagian berikut:</p>
+                <ul class="mt-2 list-disc space-y-1 pl-5">
+                    @foreach ($errors->all() as $message)
+                        <li>{{ $message }}</li>
+                    @endforeach
+                </ul>
             </div>
         @endif
 
@@ -172,6 +190,9 @@
                                                 <input type="radio" name="{{ $item['name'] }}" value="0" @checked((string) old($item['name'], (int) ($item['checked'] ?? 0)) === '0') class="border-slate-300 text-cyan-700 focus:ring-cyan-600"> Tidak
                                             </label>
                                         </div>
+                                        @error($item['name'])
+                                            <p class="mt-2 text-xs font-semibold text-rose-600">{{ $message }}</p>
+                                        @enderror
                                     </div>
                                 @endforeach
 
@@ -182,11 +203,17 @@
                                             <option value="{{ $oxygenOption }}" @selected(old('oxygen_saturation', $verification?->oxygen_saturation) === $oxygenOption)>{{ $oxygenOption }}</option>
                                         @endforeach
                                     </select>
+                                    @error('oxygen_saturation')
+                                        <p class="mt-2 text-xs font-semibold text-rose-600">{{ $message }}</p>
+                                    @enderror
                                 </label>
 
                                 <label class="block rounded-lg bg-emerald-100 p-3">
                                     <span class="block text-sm font-bold text-emerald-900">Nama Dokter anestesi</span>
                                     <input name="anesthesiologist_name" value="{{ old('anesthesiologist_name', $verification?->anesthesiologist_name) }}" class="mt-2 w-full rounded-lg border-emerald-200 text-sm focus:border-cyan-600 focus:ring-cyan-600">
+                                    @error('anesthesiologist_name')
+                                        <p class="mt-2 text-xs font-semibold text-rose-600">{{ $message }}</p>
+                                    @enderror
                                 </label>
 
                                 <div x-data="{ anesthesiaType: @js($selectedAnesthesiaType) }" class="rounded-lg bg-emerald-100 p-3">
@@ -240,6 +267,9 @@
                                     @endforeach
                                 </div>
                             </div>
+                            @error('asa_status')
+                                <p class="mt-2 text-xs font-semibold text-rose-600">{{ $message }}</p>
+                            @enderror
 
                             <div class="block rounded-lg bg-emerald-100 p-3 mt-5">
                                 <label class="text-sm font-bold text-emerald-900">Status Persetujuan anestesi</label>
@@ -253,6 +283,76 @@
                     </div>
 
                     <section class="mt-5 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+                        <div
+                            x-data="{
+                                search: '',
+                                selected: @js($selectedDoctorId),
+                                doctors: @js($doctorOptions),
+                                get filteredDoctors() {
+                                    const keyword = this.search.trim().toLowerCase();
+
+                                    if (!keyword) {
+                                        return this.doctors;
+                                    }
+
+                                    return this.doctors.filter((doctor) => {
+                                        return `${doctor.name} ${doctor.specialist} ${doctor.str_number}`.toLowerCase().includes(keyword);
+                                    });
+                                },
+                            }"
+                            class="mb-5 rounded-xl border border-cyan-100 bg-cyan-50 p-4"
+                        >
+                            <input type="hidden" name="requested_doctor_id" x-model="selected">
+
+                            <div class="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between">
+                                <div>
+                                    <p class="text-sm font-bold text-cyan-900">Dokter Penanggung Jawab <span class="text-rose-600">*</span></p>
+                                    <p class="text-xs text-cyan-700">Wajib dipilih sebelum verifikasi disimpan. Email pemberitahuan akan dikirim ke dokter ini saat pengajuan disetujui.</p>
+                                </div>
+                            </div>
+
+                            <div class="mt-3 grid gap-3 lg:grid-cols-[0.85fr_1.15fr]">
+                                <label>
+                                    <span class="text-xs font-bold text-cyan-900">Cari dokter</span>
+                                    <input
+                                        type="search"
+                                        x-model="search"
+                                        placeholder="Nama, spesialis, atau STR"
+                                        class="mt-1 w-full rounded-lg border-cyan-200 text-sm focus:border-cyan-600 focus:ring-cyan-600"
+                                    >
+                                </label>
+
+                                <label>
+                                    <span class="text-xs font-bold text-cyan-900">Pilih dari dropdown</span>
+                                    <select
+                                        x-model="selected"
+                                        class="mt-1 w-full rounded-lg border-cyan-200 text-sm focus:border-cyan-600 focus:ring-cyan-600"
+                                    >
+                                        <option value="">Pilih dokter</option>
+                                        <template x-for="doctor in filteredDoctors" :key="doctor.id">
+                                            <option
+                                                :value="doctor.id"
+                                                x-text="`${doctor.name} - ${doctor.specialist}`"
+                                            ></option>
+                                        </template>
+                                    </select>
+                                </label>
+                            </div>
+
+                            <template x-if="selected">
+                                <div class="mt-3 rounded-lg bg-white px-3 py-2 text-xs font-semibold text-cyan-900">
+                                    <span>Terpilih: </span>
+                                    <span x-text="doctors.find((doctor) => doctor.id === selected)?.name ?? '-'"></span>
+                                    <span> - </span>
+                                    <span x-text="doctors.find((doctor) => doctor.id === selected)?.specialist ?? '-'"></span>
+                                </div>
+                            </template>
+
+                            @error('requested_doctor_id')
+                                <p class="mt-2 text-xs font-semibold text-rose-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+
                         <div class="rounded-full bg-emerald-200 px-4 py-2 text-sm font-bold text-emerald-800">Status Akhir (pilih salah satu)</div>
                         <div class="mt-3 grid gap-3 md:grid-cols-2">
                             <label class="rounded-lg border border-emerald-200 bg-emerald-50 p-3">
@@ -266,10 +366,16 @@
                                 <p class="mt-1 text-xs text-rose-700">Pengajuan belum siap dan perlu penjadwalan ulang.</p>
                             </label>
                         </div>
+                        @error('decision')
+                            <p class="mt-2 text-xs font-semibold text-rose-600">{{ $message }}</p>
+                        @enderror
 
                         <label class="mt-3 block">
                             <span class="text-sm font-semibold text-slate-700">Catatan Verifikasi</span>
                             <textarea name="verification_note" rows="2" maxlength="200" placeholder="Tulis catatan di sini..." class="mt-2 w-full rounded-lg border-slate-200 text-sm focus:border-cyan-600 focus:ring-cyan-600">{{ old('verification_note', $verification?->verification_note) }}</textarea>
+                            @error('verification_note')
+                                <p class="mt-2 text-xs font-semibold text-rose-600">{{ $message }}</p>
+                            @enderror
                         </label>
 
                         <div class="mt-4 flex justify-end">

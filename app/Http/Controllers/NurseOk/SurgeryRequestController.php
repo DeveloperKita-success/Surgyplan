@@ -3,14 +3,17 @@
 namespace App\Http\Controllers\NurseOk;
 
 use App\Http\Controllers\Controller;
+use App\Mail\SurgeryRequestApprovedMail;
 use App\Models\Doctor;
+use App\Models\OkVerificationChecklist;
 use App\Models\SurgeryHistory;
 use App\Models\SurgeryRequest;
-use App\Models\OkVerificationChecklist;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\View\View;
 
 class SurgeryRequestController extends Controller
@@ -55,6 +58,11 @@ class SurgeryRequestController extends Controller
                 'okVerificationChecklist',
                 'surgerySchedules.operatingRoom',
             ]),
+            'doctors' => Doctor::query()
+                ->with(['user', 'specialist'])
+                ->whereHas('user')
+                ->orderBy('id')
+                ->get(),
         ]);
     }
 
@@ -63,21 +71,49 @@ class SurgeryRequestController extends Controller
         $this->ensureOkNurse($request->user());
         abort_unless(in_array($surgeryRequest->request_status, ['menunggu', 'ditunda'], true), 403);
 
-        $validated = $request->validate([
-            'patient_wristband_installed' => ['required', 'boolean'],
-            'doctor_present' => ['required', 'boolean'],
-            'anesthesia_consent_signed' => ['nullable', 'boolean'],
-            'oxygen_saturation' => ['required', 'in:95%-100% (Normal),90%-94% (Hipoksia ringan / batas bawah),< 90% (Hipoksia / gawat)'],
-            'anesthesiologist_name' => ['nullable', 'string', 'max:255'],
-            'anesthesia_type' => ['required', 'in:General Anesthesia / Anestesi Umum,Regional Anesthesia / Anestesi Regional,Spinal Anesthesia / Anestesi Spinal,Epidural Anesthesia / Anestesi Epidural,Local Anesthesia / Anestesi Lokal,Sedation / Sedasi,Lainnya'],
-            'anesthesia_type_other' => ['nullable', 'required_if:anesthesia_type,Lainnya', 'string', 'max:255'],
-            'asa_status' => ['required', 'in:ASA I,ASA II,ASA III,ASA IV,ASA V,ASA VI,Emergency'],
-            'anesthesia_approved' => ['nullable', 'boolean'],
-            'doctor_anesthesia_approved' => ['nullable', 'boolean'],
-            'anesthesia_note' => ['nullable', 'string'],
-            'verification_note' => ['nullable', 'string'],
-            'decision' => ['required', 'in:disetujui,ditunda'],
-        ]);
+        $validated = $request->validate(
+            [
+                'patient_wristband_installed' => ['required', 'boolean'],
+                'doctor_present' => ['required', 'boolean'],
+                'anesthesia_consent_signed' => ['nullable', 'boolean'],
+                'oxygen_saturation' => ['required', 'in:95%-100% (Normal),90%-94% (Hipoksia ringan / batas bawah),< 90% (Hipoksia / gawat)'],
+                'anesthesiologist_name' => ['nullable', 'string', 'max:255'],
+                'anesthesia_type' => ['required', 'in:General Anesthesia / Anestesi Umum,Regional Anesthesia / Anestesi Regional,Spinal Anesthesia / Anestesi Spinal,Epidural Anesthesia / Anestesi Epidural,Local Anesthesia / Anestesi Lokal,Sedation / Sedasi,Lainnya'],
+                'anesthesia_type_other' => ['nullable', 'required_if:anesthesia_type,Lainnya', 'string', 'max:255'],
+                'asa_status' => ['required', 'in:ASA I,ASA II,ASA III,ASA IV,ASA V,ASA VI,Emergency'],
+                'anesthesia_approved' => ['nullable', 'boolean'],
+                'doctor_anesthesia_approved' => ['nullable', 'boolean'],
+                'anesthesia_note' => ['nullable', 'string'],
+                'verification_note' => ['nullable', 'string'],
+                'decision' => ['required', 'in:disetujui,ditunda'],
+                'requested_doctor_id' => ['required', 'exists:doctors,id'],
+            ],
+            [
+                'requested_doctor_id.required' => 'Pilih dokter penanggung jawab sebelum menyimpan verifikasi.',
+                'requested_doctor_id.exists' => 'Dokter yang dipilih tidak valid atau belum terdaftar.',
+                'asa_status.required' => 'Pilih status ASA pasien.',
+                'asa_status.in' => 'Status ASA yang dipilih tidak valid.',
+                'anesthesia_type.required' => 'Pilih jenis anestesi.',
+                'anesthesia_type.in' => 'Jenis anestesi yang dipilih tidak valid.',
+                'anesthesia_type_other.required_if' => 'Isi jenis anestesi lainnya.',
+                'oxygen_saturation.required' => 'Pilih saturasi oksigen.',
+                'oxygen_saturation.in' => 'Saturasi oksigen yang dipilih tidak valid.',
+                'patient_wristband_installed.required' => 'Pilih status gelang pasien.',
+                'doctor_present.required' => 'Pilih status kehadiran dokter.',
+                'decision.required' => 'Pilih status akhir pengajuan.',
+                'decision.in' => 'Status akhir pengajuan tidak valid.',
+            ],
+            [
+                'requested_doctor_id' => 'dokter penanggung jawab',
+                'asa_status' => 'status ASA',
+                'anesthesia_type' => 'jenis anestesi',
+                'anesthesia_type_other' => 'jenis anestesi lainnya',
+                'oxygen_saturation' => 'saturasi oksigen',
+                'patient_wristband_installed' => 'gelang pasien',
+                'doctor_present' => 'kehadiran dokter',
+                'decision' => 'status akhir',
+            ],
+        );
 
         DB::transaction(function () use ($validated, $request, $surgeryRequest): void {
             $surgeryRequest->preoperativeChecklist?->update([
@@ -107,6 +143,7 @@ class SurgeryRequestController extends Controller
             $oldStatus = $surgeryRequest->request_status;
             $surgeryRequest->update([
                 'request_status' => $validated['decision'],
+                'requested_doctor_id' => $validated['requested_doctor_id'] ?? $surgeryRequest->requested_doctor_id,
             ]);
 
             SurgeryHistory::create([
@@ -118,9 +155,39 @@ class SurgeryRequestController extends Controller
             ]);
         });
 
+        if ($validated['decision'] === 'disetujui') {
+            $this->notifyDoctorRequestApproved($surgeryRequest->fresh());
+        }
+
         return redirect()
             ->route('nurse-ok.requests.show', $surgeryRequest)
             ->with('status', 'Keputusan pengajuan berhasil disimpan.');
+    }
+
+    private function notifyDoctorRequestApproved(?SurgeryRequest $surgeryRequest): void
+    {
+        if (! $surgeryRequest) {
+            return;
+        }
+
+        $surgeryRequest->loadMissing(['patient', 'requestedDoctor.user']);
+        $doctorUser = $surgeryRequest->requestedDoctor?->user;
+
+        if (! $doctorUser) {
+            return;
+        }
+
+        try {
+            Mail::to($doctorUser->email)->send(
+                new SurgeryRequestApprovedMail($surgeryRequest)
+            );
+        } catch (\Throwable $exception) {
+            Log::warning('Gagal mengirim email pengajuan operasi disetujui ke dokter.', [
+                'surgery_request_id' => $surgeryRequest->id,
+                'doctor_user_id' => $doctorUser->id,
+                'error' => $exception->getMessage(),
+            ]);
+        }
     }
 
     private function ensureOkNurse(?User $user): void
