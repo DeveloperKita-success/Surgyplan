@@ -54,19 +54,5 @@
                 <p class="mt-4 text-sm text-slate-500">Checklist praoperasi belum tersedia.</p>
             @endif
         </section>
-
-        <section class="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-            <h2 class="text-lg font-semibold">Laporan Operasi</h2>
-            <div class="mt-5 space-y-3">
-                @forelse ($schedule->operationReports as $report)
-                    <div class="rounded-lg bg-slate-50 p-4 text-sm">
-                        <p class="font-semibold text-slate-900">{{ ucfirst($report->status) }}</p>
-                        <p class="mt-2 text-slate-600">{{ $report->operation_result ?? 'Belum ada hasil operasi.' }}</p>
-                    </div>
-                @empty
-                    <p class="text-sm text-slate-500">Belum ada laporan operasi.</p>
-                @endforelse
-            </div>
-        </section>
     </div>
 </x-app-layout>

@@ -7,13 +7,8 @@
     </x-slot>
 
     <div class="space-y-6">
-        <section class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-            @foreach ([
-                ['label' => 'Pasien Ditangani', 'value' => '24'],
-                ['label' => 'Pengajuan Draft', 'value' => '05'],
-                ['label' => 'Checklist Belum Lengkap', 'value' => '08'],
-                ['label' => 'Jadwal Hari Ini', 'value' => '06'],
-            ] as $stat)
+        <section class="grid gap-4 md:grid-cols-3">
+            @foreach ($stats as $stat)
                 <div class="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
                     <p class="text-sm text-slate-500">{{ $stat['label'] }}</p>
                     <p class="mt-3 text-3xl font-bold text-slate-900">{{ $stat['value'] }}</p>

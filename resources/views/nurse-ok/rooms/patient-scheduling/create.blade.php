@@ -11,11 +11,117 @@
         roomOptions: @js($roomOptions),
         selectedRequestId: '{{ old('surgery_request_id') }}',
         selectedRoomId: '{{ old('operating_room_id') }}',
+        selectedEndTime: '{{ old('end_time') }}',
         requestDetail() {
             return this.requestOptions.find((item) => String(item.id) === String(this.selectedRequestId));
         },
         roomDetail() {
             return this.roomOptions.find((item) => String(item.id) === String(this.selectedRoomId));
+        },
+        roomIsSchedulable() {
+            return ['tersedia', 'terpakai_sebagian'].includes(this.scheduleAvailabilityStatus());
+        },
+        roomSchedulesForSelectedDate() {
+            const room = this.roomDetail();
+            const request = this.requestDetail();
+
+            if (!room || !request?.surgery_date_key) {
+                return [];
+            }
+
+            return (room.schedules ?? []).filter((schedule) => schedule.date === request.surgery_date_key);
+        },
+        roomOverlappingSchedules() {
+            const request = this.requestDetail();
+            const startTime = request?.start_time;
+            const endTime = this.selectedEndTime;
+
+            if (!startTime || !endTime) {
+                return this.roomSchedulesForSelectedDate();
+            }
+
+            return this.roomSchedulesForSelectedDate().filter((schedule) => schedule.start_time < endTime && schedule.end_time > startTime);
+        },
+        scheduleAvailabilityStatus() {
+            const room = this.roomDetail();
+
+            if (!room) {
+                return null;
+            }
+
+            if (room.status === 'perawatan') {
+                return 'perawatan';
+            }
+
+            if (room.status === 'nonaktif') {
+                return 'tidak_tersedia';
+            }
+
+            const capacity = Number(room.capacity) || 0;
+            const used = this.roomOverlappingSchedules().length;
+
+            if (capacity <= 0 || used >= capacity) {
+                return 'penuh';
+            }
+
+            if (used > 0) {
+                return 'terpakai_sebagian';
+            }
+
+            return 'tersedia';
+        },
+        scheduleAvailabilityLabel() {
+            return {
+                tersedia: 'Tersedia',
+                terpakai_sebagian: 'Terpakai sebagian',
+                penuh: 'Penuh',
+                perawatan: 'Perawatan',
+                tidak_tersedia: 'Tidak tersedia',
+            }[this.scheduleAvailabilityStatus()] ?? '-';
+        },
+        scheduleAvailabilityClasses() {
+            return {
+                tersedia: 'border-emerald-200 bg-emerald-50 text-emerald-700',
+                terpakai_sebagian: 'border-amber-200 bg-amber-50 text-amber-700',
+                penuh: 'border-rose-200 bg-rose-50 text-rose-700',
+                perawatan: 'border-rose-200 bg-rose-50 text-rose-700',
+                tidak_tersedia: 'border-slate-200 bg-slate-100 text-slate-600',
+            }[this.scheduleAvailabilityStatus()] ?? 'border-slate-200 bg-slate-50 text-slate-600';
+        },
+        scheduleAvailabilityNote() {
+            const room = this.roomDetail();
+            const used = this.roomOverlappingSchedules().length;
+            const capacity = Number(room?.capacity) || 0;
+
+            if (!room) {
+                return '-';
+            }
+
+            if (room.status === 'perawatan') {
+                return 'Kamar sedang perawatan dan tidak bisa dijadwalkan.';
+            }
+
+            if (room.status === 'nonaktif') {
+                return 'Kamar nonaktif dan tidak bisa dijadwalkan.';
+            }
+
+            return `${used} dari ${capacity} slot kapasitas terpakai pada rentang waktu ini.`;
+        },
+        roomStatusLabel(status) {
+            return {
+                siap: 'Siap',
+                dipakai: 'Dipakai',
+                nonaktif: 'Nonaktif',
+                perawatan: 'Perawatan',
+            }[status] ?? status ?? '-';
+        },
+        roomStatusClasses(status) {
+            return {
+                siap: 'border-emerald-200 bg-emerald-50 text-emerald-700',
+                dipakai: 'border-amber-200 bg-amber-50 text-amber-700',
+                nonaktif: 'border-slate-200 bg-slate-100 text-slate-600',
+                perawatan: 'border-rose-200 bg-rose-50 text-rose-700',
+            }[status] ?? 'border-slate-200 bg-slate-50 text-slate-600';
         }
     }">
         @if (session('status'))
@@ -134,8 +240,9 @@
                         >
                             <option value="">Pilih kamar operasi</option>
                             @foreach ($rooms as $room)
+                                @php($isUnavailable = $room->status !== 'siap' || $room->capacity < 1)
                                 <option value="{{ $room->id }}" @selected(old('operating_room_id') == $room->id)>
-                                    {{ $room->room_code }} - {{ $room->room_name }}
+                                    {{ $room->room_code }} - {{ $room->room_name }}{{ $isUnavailable ? ' (Tidak tersedia)' : '' }}
                                 </option>
                             @endforeach
                         </select>
@@ -152,8 +259,17 @@
                                 <dd class="mt-1 font-semibold text-slate-900" x-text="roomDetail()?.room_code ?? '-'"></dd>
                             </div>
                             <div>
-                                <dt class="text-slate-500">Status</dt>
-                                <dd class="mt-1 font-semibold capitalize text-slate-900" x-text="roomDetail()?.status ?? '-'"></dd>
+                                <dt class="text-slate-500">Status Operasional</dt>
+                                <dd class="mt-1">
+                                    <span class="inline-flex rounded-full border px-2.5 py-1 text-xs font-bold" :class="roomStatusClasses(roomDetail()?.status)" x-text="roomStatusLabel(roomDetail()?.status)"></span>
+                                </dd>
+                            </div>
+                            <div>
+                                <dt class="text-slate-500">Status Ketersediaan</dt>
+                                <dd class="mt-1">
+                                    <span class="inline-flex rounded-full border px-2.5 py-1 text-xs font-bold" :class="scheduleAvailabilityClasses()" x-text="scheduleAvailabilityLabel()"></span>
+                                    <p class="mt-1 text-xs font-medium text-slate-500" x-text="scheduleAvailabilityNote()"></p>
+                                </dd>
                             </div>
                             <div>
                                 <dt class="text-slate-500">Kapasitas</dt>
@@ -161,7 +277,24 @@
                             </div>
                             <div class="sm:col-span-2">
                                 <dt class="text-slate-500">Keterangan</dt>
-                                <dd class="mt-1 font-medium text-slate-700" x-text="roomDetail()?.description || '-'"></dd>
+                                <dd class="mt-2">
+                                    <template x-if="requestDetail() && roomSchedulesForSelectedDate().length > 0">
+                                        <div class="flex flex-wrap gap-2">
+                                            <template x-for="schedule in roomSchedulesForSelectedDate()" :key="`${schedule.date}-${schedule.patient_name}-${schedule.start_time}`">
+                                                <span class="rounded-md border border-amber-200 bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-700">
+                                                    <span x-text="schedule.start_time"></span>
+                                                    sedang digunakan
+                                                </span>
+                                            </template>
+                                        </div>
+                                    </template>
+                                    <p class="text-sm font-medium text-slate-600" x-show="requestDetail() && roomSchedulesForSelectedDate().length === 0">
+                                        Tidak ada jadwal operasi pada tanggal pengajuan.
+                                    </p>
+                                    <p class="text-sm font-medium text-slate-600" x-show="!requestDetail()">
+                                        Pilih pasien untuk melihat jadwal kamar pada tanggal pengajuan.
+                                    </p>
+                                </dd>
                             </div>
                             <div class="sm:col-span-2">
                                 <dt class="text-slate-500">Fasilitas</dt>
@@ -176,7 +309,35 @@
                                     <p class="text-sm text-slate-600" x-show="(roomDetail()?.facilities ?? []).length === 0">Belum ada fasilitas terdaftar.</p>
                                 </dd>
                             </div>
+                            <div class="sm:col-span-2" x-show="requestDetail()" x-cloak>
+                                <dt class="text-slate-500">Jadwal di Tanggal Pengajuan</dt>
+                                <dd class="mt-2">
+                                    <template x-if="roomOverlappingSchedules().length > 0">
+                                        <div class="space-y-2">
+                                            <template x-for="schedule in roomOverlappingSchedules()" :key="`${schedule.patient_name}-${schedule.start_time}`">
+                                                <div class="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2">
+                                                    <div class="flex flex-wrap items-center justify-between gap-2">
+                                                        <p class="text-sm font-semibold text-slate-900" x-text="schedule.patient_name"></p>
+                                                        <span class="rounded-full bg-white px-2.5 py-1 text-xs font-bold text-amber-700">
+                                                            <span x-text="schedule.start_time"></span>
+                                                            -
+                                                            <span x-text="schedule.end_time"></span>
+                                                        </span>
+                                                    </div>
+                                                    <p class="mt-1 text-xs font-medium text-slate-600" x-text="`Dokter: ${schedule.doctor_name}`"></p>
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </template>
+                                    <p class="text-sm text-emerald-700" x-show="roomOverlappingSchedules().length === 0">
+                                        Belum ada jadwal yang bertabrakan pada kamar ini.
+                                    </p>
+                                </dd>
+                            </div>
                         </dl>
+                        <p class="mt-4 rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm font-semibold text-rose-700" x-show="roomDetail() && !roomIsSchedulable()" x-cloak>
+                            Kamar ini tidak tersedia pada rentang waktu yang dipilih.
+                        </p>
                     </div>
 
                     <div class="mt-4 rounded-xl border border-emerald-200 bg-emerald-50/70 p-4" x-show="requestDetail() && roomDetail()" x-cloak>
@@ -199,7 +360,7 @@
                             </div>
                             <label class="rounded-lg bg-white px-3 py-2">
                                 <span class="text-xs font-medium text-slate-500">Waktu Selesai</span>
-                                <input type="time" name="end_time" value="{{ old('end_time') }}" class="mt-1 w-full rounded-lg border-slate-200 text-sm focus:border-cyan-600 focus:ring-cyan-600" required>
+                                <input type="time" name="end_time" x-model="selectedEndTime" class="mt-1 w-full rounded-lg border-slate-200 text-sm focus:border-cyan-600 focus:ring-cyan-600" required>
                                 @error('end_time')
                                     <p class="mt-1 text-xs font-semibold text-rose-600">{{ $message }}</p>
                                 @enderror
@@ -217,7 +378,7 @@
                 <a href="{{ route('nurse-ok.rooms.index') }}" class="rounded-lg border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50">
                     Batal
                 </a>
-                <button type="submit" class="rounded-lg bg-cyan-700 px-5 py-3 text-sm font-semibold text-white hover:bg-cyan-800">
+                <button type="submit" :disabled="roomDetail() && !roomIsSchedulable()" class="rounded-lg bg-cyan-700 px-5 py-3 text-sm font-semibold text-white hover:bg-cyan-800 disabled:cursor-not-allowed disabled:bg-slate-300">
                     Simpan Penjadwalan
                 </button>
             </div>

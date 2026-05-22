@@ -122,7 +122,7 @@ class AdminUserController extends Controller
             'nurse_is_ok' => [Rule::requiredIf($request->role === 'perawat'), 'nullable', 'boolean'],
             'origin_unit' => [
                 Rule::requiredIf(
-                    $request->role === 'perawat' && !$request->boolean('nurse_is_ok')
+                    $request->role === 'perawat' && ! $request->boolean('nurse_is_ok')
                 ),
                 'nullable',
                 Rule::in(['Bangsal', 'IGD', 'Poli']),
@@ -217,7 +217,7 @@ class AdminUserController extends Controller
         $user->email = $validated['email'];
         $user->role = $validated['role'];
 
-        if (!empty($validated['password'])) {
+        if (! empty($validated['password'])) {
             $user->password = Hash::make($validated['password']);
         }
 
@@ -263,7 +263,7 @@ class AdminUserController extends Controller
         if ($user->doctor && $user->doctor->operationReports()->exists()) {
             return redirect()
                 ->back()
-                ->with('error', 'Dokter memiliki laporan operasi, tidak bisa dihapus.');
+                ->with('error', 'Dokter memiliki data operasi terkait, tidak bisa dihapus.');
         }
 
         if ($user->surgeryRequests()->exists()) {

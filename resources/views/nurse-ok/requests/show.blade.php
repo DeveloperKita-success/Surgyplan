@@ -46,6 +46,27 @@
             ['title' => 'Hasil laboratorium', 'file' => $checklist?->lab_result_file],
             ['title' => 'Hasil radiologi', 'file' => $checklist?->radiology_file],
         ];
+        $preoperativeItems = [
+            ['label' => 'Hasil laboratorium', 'value' => $checklist?->lab_result_complete ? 'Lengkap' : 'Belum lengkap'],
+            ['label' => 'Hasil radiologi', 'value' => $checklist?->radiology_available ? 'Tersedia' : 'Tidak tersedia'],
+            ['label' => 'Konsultasi anestesi', 'value' => $checklist?->anesthesia_consultation_done ? 'Sudah dikonsultasikan' : 'Belum dikonsultasikan'],
+            ['label' => 'Estimasi risiko anestesi', 'value' => $checklist?->anesthesia_risk_estimation ?: '-'],
+            ['label' => 'Tanda vital', 'value' => $checklist?->vital_sign_stable ? 'Stabil' : 'Beresiko'],
+            ['label' => 'Catatan tanda vital', 'value' => $checklist?->vital_sign_note ?: '-'],
+            ['label' => 'Tekanan darah', 'value' => $checklist?->blood_pressure ?: '-'],
+            ['label' => 'Puasa', 'value' => $checklist?->fasting_more_than_6_hours ? 'Lebih dari 6 jam' : 'Kurang dari 6 jam'],
+            ['label' => 'Golongan darah', 'value' => $checklist?->blood_type ?: '-'],
+            ['label' => 'Ketersediaan darah', 'value' => $checklist?->blood_available ? 'Tersedia' : 'Tidak tersedia'],
+            ['label' => 'Infus', 'value' => $checklist?->infusion_installed ? 'Terpasang' : 'Tidak terpasang'],
+            ['label' => 'Kateter', 'value' => $checklist?->catheter_installed ? 'Terpasang' : 'Tidak terpasang'],
+            ['label' => 'Area operasi dicukur', 'value' => $checklist?->surgical_area_shaved ? 'Sudah dilakukan' : 'Belum dilakukan'],
+            ['label' => 'Perhiasan', 'value' => $checklist?->jewelry_removed ? 'Terlepas' : 'Tidak terlepas'],
+            ['label' => 'Riwayat penyakit', 'value' => $checklist?->disease_history ?: '-'],
+            ['label' => 'Obat yang dikonsumsi', 'value' => $checklist?->current_medications ?: '-'],
+            ['label' => 'Riwayat operasi sebelumnya', 'value' => $checklist?->has_previous_surgery ? 'Ada riwayat operasi' : 'Tidak ada'],
+            ['label' => 'Catatan operasi sebelumnya', 'value' => $checklist?->previous_surgery_note ?: '-'],
+            ['label' => 'Tanggal operasi sebelumnya', 'value' => $checklist?->previous_surgery_date?->format('d-m-Y') ?? '-'],
+        ];
     @endphp
 
     <div class="space-y-5">
@@ -77,9 +98,32 @@
                         <div class="grid grid-cols-[140px_12px_1fr] gap-2"><dt class="text-slate-500">Persetujuan Tindakan</dt><dd>:</dd><dd class="font-semibold text-slate-800">{{ $checklist?->surgical_consent ? 'Ada' : 'Belum ada' }}</dd></div>
                         <div class="grid grid-cols-[140px_12px_1fr] gap-2"><dt class="text-slate-500">Persetujuan Anestesi</dt><dd>:</dd><dd class="font-semibold text-slate-800">{{ $checklist?->anesthesia_consent ? 'Ada' : 'Belum ada' }}</dd></div>
                         <div class="grid grid-cols-[140px_12px_1fr] gap-2"><dt class="text-slate-500">TTD Anestesi</dt><dd>:</dd><dd class="font-semibold text-slate-800">{{ $checklist?->anesthesia_consent_signed ? 'Sudah TTD' : 'Belum TTD' }}</dd></div>
+                        <div class="grid grid-cols-[140px_12px_1fr] gap-2"><dt class="text-slate-500">Tanggal Pengajuan</dt><dd>:</dd><dd class="font-semibold text-slate-800">{{ $surgeryRequest->requested_date?->format('d-m-Y') ?? '-' }}</dd></div>
+                        <div class="grid grid-cols-[140px_12px_1fr] gap-2"><dt class="text-slate-500">Jam Pengajuan</dt><dd>:</dd><dd class="font-semibold text-slate-800">{{ $surgeryRequest->requested_start_time ? substr((string) $surgeryRequest->requested_start_time, 0, 5) : '-' }}</dd></div>
                         <div class="grid grid-cols-[140px_12px_1fr] gap-2"><dt class="text-slate-500">Alergi</dt><dd>:</dd><dd class="font-semibold text-slate-800">{{ $checklist?->allergy ?: 'Tidak ada' }}</dd></div>
                         <div class="grid grid-cols-[140px_12px_1fr] gap-2"><dt class="text-slate-500">Catatan tambahan</dt><dd>:</dd><dd class="font-semibold text-slate-800">{{ $checklist?->final_note ?: '-' }}</dd></div>
                     </dl>
+                </div>
+
+                <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+                    <div class="rounded-full bg-emerald-200 px-4 py-2 text-sm font-bold text-emerald-800">Checklist Pra Operasi</div>
+                    <p class="mt-3 text-xs font-medium text-slate-500">Data ini berasal dari input Perawat Biasa dan hanya dapat dilihat oleh Perawat OK saat verifikasi.</p>
+
+                    @if ($checklist)
+                        <dl class="mt-4 divide-y divide-slate-100 text-sm">
+                            @foreach ($preoperativeItems as $item)
+                                <div class="grid grid-cols-[150px_12px_1fr] gap-2 py-2">
+                                    <dt class="text-slate-500">{{ $item['label'] }}</dt>
+                                    <dd class="text-slate-400">:</dd>
+                                    <dd class="font-semibold text-slate-800">{{ $item['value'] }}</dd>
+                                </div>
+                            @endforeach
+                        </dl>
+                    @else
+                        <div class="mt-4 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-800">
+                            Checklist pra operasi belum tersedia.
+                        </div>
+                    @endif
                 </div>
             </section>
 

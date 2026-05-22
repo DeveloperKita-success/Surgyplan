@@ -21,11 +21,11 @@
                 </div>
 
                 <!-- Logo -->
-                <div class="shrink-0 flex items-center">
+                <!-- <div class="shrink-0 flex items-center">
                     <a href="{{ route('dashboard') }}">
                         <x-application-logo class="block h-9 w-auto" />
                     </a>
-                </div>
+                </div> -->
             </div>
 
             <!-- Date & Time -->

@@ -5,7 +5,6 @@
         ['label' => 'Pengajuan Operasi', 'icon' => 'clipboard', 'route' => 'nurse-ok.requests.index', 'active' => 'nurse-ok.requests.*'],
         ['label' => 'Jadwal Operasi', 'icon' => 'calendar', 'route' => 'nurse-ok.schedules.index', 'active' => 'nurse-ok.schedules.*'],
         ['label' => 'Kamar Operasi', 'icon' => 'room', 'route' => 'nurse-ok.rooms.index', 'active' => 'nurse-ok.rooms.*'],
-        ['label' => 'Dokter', 'icon' => 'doctor', 'route' => 'nurse-ok.doctors.index', 'active' => 'nurse-ok.doctors.*'],
     ];
 @endphp
 
