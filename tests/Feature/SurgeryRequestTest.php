@@ -180,6 +180,7 @@ it('emails doctors when a new surgery request conflicts with their schedule', fu
         'room_code' => 'OK-01',
         'room_name' => 'Kamar Operasi 01',
         'status' => 'siap',
+        'capacity' => 1,
     ]);
 
     $existingRequest = SurgeryRequest::create([

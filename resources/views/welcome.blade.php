@@ -176,7 +176,7 @@
                                             <div class="mt-1 text-xs leading-relaxed text-slate-600">Total pasien operasi dari IGD</div>
                                         </div>
                                         <div class="text-lg font-semibold text-slate-900">
-                                            {{ data_get($rekapPasien ?? null, 'igd', '—') }}
+                                            {{ number_format(data_get($rekapPasien ?? [], 'igd', 0), 0, ',', '.') }}
                                         </div>
                                     </div>
                                 </div>
@@ -187,7 +187,7 @@
                                             <div class="mt-1 text-xs leading-relaxed text-slate-600">Total pasien operasi dari bangsal</div>
                                         </div>
                                         <div class="text-lg font-semibold text-slate-900">
-                                            {{ data_get($rekapPasien ?? null, 'bangsal', '—') }}
+                                            {{ number_format(data_get($rekapPasien ?? [], 'bangsal', 0), 0, ',', '.') }}
                                         </div>
                                     </div>
                                 </div>
@@ -198,7 +198,7 @@
                                             <div class="mt-1 text-xs leading-relaxed text-slate-600">Total pasien operasi dari poli</div>
                                         </div>
                                         <div class="text-lg font-semibold text-slate-900">
-                                            {{ data_get($rekapPasien ?? null, 'poli', '—') }}
+                                            {{ number_format(data_get($rekapPasien ?? [], 'poli', 0), 0, ',', '.') }}
                                         </div>
                                     </div>
                                 </div>

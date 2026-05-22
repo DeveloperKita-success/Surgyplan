@@ -22,6 +22,7 @@ it('lets ok nurses manage operating rooms', function () {
             'room_name' => 'Kamar Operasi 01',
             'specialist_id' => $specialist->id,
             'status' => 'siap',
+            'capacity' => 1,
         ])
         ->assertRedirect();
 
@@ -49,6 +50,7 @@ it('lets ok nurses manage operating rooms', function () {
             'room_name' => 'Kamar Operasi Utama',
             'specialist_id' => $specialist->id,
             'status' => 'perawatan',
+            'capacity' => 1,
         ])
         ->assertRedirect(route('nurse-ok.rooms.show', $room));
 
@@ -73,6 +75,7 @@ it('blocks non ok nurses from managing operating rooms', function () {
         'room_code' => 'OK-02',
         'room_name' => 'Kamar Operasi 02',
         'status' => 'siap',
+        'capacity' => 1,
     ]);
 
     $this->actingAs($regularNurse)

@@ -3,14 +3,17 @@
 namespace App\Http\Controllers\NurseOk;
 
 use App\Http\Controllers\Controller;
+use App\Mail\DoctorScheduleCreatedMail;
 use App\Models\OperatingRoom;
 use App\Models\SurgeryRequest;
 use App\Models\SurgerySchedule;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
@@ -69,9 +72,14 @@ class OperatingRoomController extends Controller
             ->get();
 
         $rooms = OperatingRoom::query()
-            ->with('facilities')
-            ->where('status', 'siap')
-            ->where('capacity', '>', 0)
+            ->with([
+                'facilities',
+                'surgerySchedules' => fn ($query) => $query
+                    ->with(['patient', 'doctor.user'])
+                    ->where('schedule_status', 'scheduled')
+                    ->orderBy('surgery_date')
+                    ->orderBy('start_time'),
+            ])
             ->orderBy('room_name')
             ->get();
 
@@ -82,6 +90,7 @@ class OperatingRoomController extends Controller
                 'patient_mrn' => $request->patient?->medical_record_number ?? '-',
                 'patient_gender' => $request->patient?->gender ?? '-',
                 'patient_origin_room' => $request->patient?->origin_room ?? '-',
+                'surgery_date_key' => optional($request->requested_date)->toDateString(),
                 'surgery_date' => optional($request->requested_date)->format('d M Y') ?? '-',
                 'start_time' => $request->requested_start_time ? substr((string) $request->requested_start_time, 0, 5) : '-',
                 'end_time' => $request->requested_end_time ? substr((string) $request->requested_end_time, 0, 5) : '-',
@@ -100,6 +109,15 @@ class OperatingRoomController extends Controller
                 'facilities' => $room->facilities
                     ->pluck('name')
                     ->filter()
+                    ->values(),
+                'schedules' => $room->surgerySchedules
+                    ->map(fn (SurgerySchedule $schedule) => [
+                        'date' => optional($schedule->surgery_date)->toDateString(),
+                        'patient_name' => $schedule->patient?->name ?? '-',
+                        'doctor_name' => $schedule->doctor?->user?->name ?? '-',
+                        'start_time' => $schedule->start_time ? substr((string) $schedule->start_time, 0, 5) : '-',
+                        'end_time' => $schedule->end_time ? substr((string) $schedule->end_time, 0, 5) : '-',
+                    ])
                     ->values(),
             ];
         })->values();
@@ -122,7 +140,7 @@ class OperatingRoomController extends Controller
             'end_time' => ['required', 'date_format:H:i'],
         ]);
 
-        $result = DB::transaction(function () use ($validated, $request): ?array {
+        $result = DB::transaction(function () use ($validated, $request): array {
             $selectedRequest = SurgeryRequest::query()
                 ->with(['surgerySchedules', 'okVerificationChecklist'])
                 ->lockForUpdate()
@@ -160,6 +178,13 @@ class OperatingRoomController extends Controller
                 ->lockForUpdate()
                 ->findOrFail($validated['operating_room_id']);
 
+            if (in_array($room->status, ['perawatan', 'nonaktif'], true)) {
+                return [
+                    'field' => 'operating_room_id',
+                    'message' => 'Kamar operasi tidak tersedia untuk penjadwalan.',
+                ];
+            }
+
             if ($room->capacity < 1) {
                 return [
                     'field' => 'operating_room_id',
@@ -167,7 +192,22 @@ class OperatingRoomController extends Controller
                 ];
             }
 
-            SurgerySchedule::create([
+            $overlappingScheduleCount = SurgerySchedule::query()
+                ->where('operating_room_id', $room->id)
+                ->whereDate('surgery_date', $selectedRequest->requested_date)
+                ->where('schedule_status', 'scheduled')
+                ->where('start_time', '<', $validated['end_time'])
+                ->where('end_time', '>', $selectedRequest->requested_start_time)
+                ->count();
+
+            if ($overlappingScheduleCount >= $room->capacity) {
+                return [
+                    'field' => 'operating_room_id',
+                    'message' => 'Kapasitas kamar operasi sudah penuh pada rentang waktu tersebut.',
+                ];
+            }
+
+            $surgerySchedule = SurgerySchedule::create([
                 'surgery_request_id' => $selectedRequest->id,
                 'patient_id' => $selectedRequest->patient_id,
                 'doctor_id' => $selectedRequest->requested_doctor_id,
@@ -179,25 +219,44 @@ class OperatingRoomController extends Controller
                 'schedule_status' => 'scheduled',
             ]);
 
-            $room->decrement('capacity');
-            $room->refresh();
-
-            if ($room->capacity < 1) {
-                $room->update(['status' => 'dipakai']);
-            }
-
-            return null;
+            return [
+                'schedule' => $surgerySchedule,
+            ];
         });
 
-        if ($result !== null) {
+        if (array_key_exists('field', $result)) {
             return back()
                 ->withErrors([$result['field'] => $result['message']])
                 ->withInput();
         }
 
+        $this->notifyDoctorScheduleCreated($result['schedule']);
+
         return redirect()
             ->route('nurse-ok.schedules.index')
             ->with('status', 'Penjadwalan pasien berhasil disimpan.');
+    }
+
+    private function notifyDoctorScheduleCreated(SurgerySchedule $surgerySchedule): void
+    {
+        $surgerySchedule->loadMissing(['patient', 'doctor.user', 'operatingRoom', 'surgeryRequest']);
+        $doctorUser = $surgerySchedule->doctor?->user;
+
+        if (! $doctorUser) {
+            return;
+        }
+
+        try {
+            Mail::to($doctorUser->email)->send(
+                new DoctorScheduleCreatedMail($surgerySchedule)
+            );
+        } catch (\Throwable $exception) {
+            Log::warning('Gagal mengirim email jadwal operasi baru ke dokter.', [
+                'surgery_schedule_id' => $surgerySchedule->id,
+                'doctor_user_id' => $doctorUser->id,
+                'error' => $exception->getMessage(),
+            ]);
+        }
     }
 
     public function store(Request $request): RedirectResponse
