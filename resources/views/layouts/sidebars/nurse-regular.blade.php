@@ -16,8 +16,8 @@
     ];
 @endphp
 
-<nav class="space-y-1.5">
-    <p class="px-3 pb-2 text-xs font-semibold uppercase tracking-[0.22em] text-green-100/80">Menu Perawat</p>
+<nav class="space-y-2">
+    <p class="px-3 pb-3 text-xs font-semibold uppercase tracking-[0.22em] text-emerald-100/75">MENU PERAWAT</p>
 
     @foreach ($items as $item)
         @include('layouts.sidebars.menu-item', ['item' => $item])

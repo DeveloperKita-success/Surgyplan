@@ -14,16 +14,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body
-    class="relative min-h-screen overflow-x-hidden bg-gradient-to-br from-green-50 to-emerald-100 font-sans antialiased text-slate-900">
-    <div class="pointer-events-none absolute inset-0 overflow-hidden">
-        <div class="absolute -left-28 -top-24 h-96 w-96 rounded-full bg-white/40 blur-3xl"></div>
-        <div class="absolute -right-32 top-10 h-[28rem] w-[28rem] rounded-full bg-emerald-200/40 blur-3xl"></div>
-        <div class="absolute left-1/2 top-24 h-56 w-56 -translate-x-1/2 rounded-full bg-green-200/30 blur-3xl"></div>
-        <div class="absolute -bottom-40 left-10 h-[32rem] w-[32rem] rounded-[6rem] bg-white/30 blur-3xl"></div>
-        <div class="absolute left-12 top-16 h-24 w-24 rounded-full border border-emerald-900/10"></div>
-        <div class="absolute right-24 top-36 h-40 w-40 rounded-full border border-emerald-900/10"></div>
-    </div>
+<body class="relative min-h-screen overflow-x-hidden bg-[#f8faf9] font-sans antialiased text-slate-900">
     @php
         $user = auth()->user();
         $roleLabel = match ($user?->role) {
@@ -48,15 +39,15 @@
             @click="sidebarOpen = false"></div>
 
         <aside
-            class="fixed left-0 top-0 z-40 flex h-screen w-64 -translate-x-[110%] flex-col overflow-hidden shadow-xl transition duration-300 ease-in-out lg:translate-x-0"
+            class="fixed bottom-0 left-0 top-16 z-40 flex w-[min(18rem,86vw)] -translate-x-[110%] flex-col overflow-hidden rounded-tr-[2rem] shadow-[18px_0_45px_rgba(6,53,47,0.12)] transition duration-300 ease-in-out sm:top-[72px] sm:w-72 lg:translate-x-0"
             :class="{ 'translate-x-0': sidebarOpen }">
-            <div class="absolute inset-0 bg-gradient-to-b from-emerald-900 via-emerald-800 to-green-600"></div>
-            <div class="absolute inset-0 bg-white/10 backdrop-blur-xl"></div>
+            <div class="absolute inset-0 bg-gradient-to-b from-[#052f2a] via-[#0a433b] to-[#0f5c4d]"></div>
+            <div class="absolute inset-0 bg-gradient-to-r from-slate-950/12 via-transparent to-white/5 backdrop-blur-xl"></div>
 
             <div class="pointer-events-none absolute inset-0 overflow-hidden">
-                <div class="absolute -right-16 -top-16 h-56 w-56 rounded-full border border-white/10"></div>
+                <div class="absolute -right-20 -top-20 h-64 w-64 rounded-full border border-white/10 bg-white/5"></div>
                 <div class="absolute -left-24 top-28 h-72 w-72 rounded-full border border-white/10"></div>
-                <div class="absolute -bottom-16 right-10 h-64 w-64 rounded-[4rem] bg-white/10 blur-3xl opacity-30">
+                <div class="absolute -bottom-16 right-10 h-64 w-64 rounded-[4rem] bg-emerald-200/12 blur-3xl opacity-40">
                 </div>
 
                 <div class="absolute bottom-6 left-6 grid grid-cols-6 gap-2 opacity-20">
@@ -66,30 +57,28 @@
                 </div>
             </div>
 
-            <div class="relative flex h-full flex-col p-4">
-                <div class="flex items-center gap-3 px-2 py-2">
-                    <div
-                        class="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-white/15 shadow-md ring-1 ring-white/15">
-                        <img src="{{ asset('image/splash.png') }}" alt="Logo SurgyPlan"
-                            class="h-8 w-8 object-contain" />
-                    </div>
-                    <div class="min-w-0">
-                        <p class="truncate text-base font-bold tracking-tight text-white">SurgyPlan</p>
-                        <p class="truncate text-xs font-medium text-green-100/90">Hospital Dashboard</p>
-                    </div>
-                </div>
-
-
-
+            <div class="relative flex h-full flex-col p-4 sm:p-6">
                 @if ($sidebarView)
-                    <div class="min-h-0 flex-1 overflow-y-auto pr-1 pt-4">
+                    <div class="min-h-0 flex-1 overflow-y-auto pr-1 pt-3">
                         @include($sidebarView)
                     </div>
                 @endif
 
-                <div class="mt-auto rounded-2xl bg-white/10 p-3 backdrop-blur-md ring-1 ring-white/15">
-                    <p class="truncate text-sm font-semibold text-white">{{ $user?->name }}</p>
-                    <p class="mt-1 text-xs font-medium text-green-100/90">{{ $roleLabel }}</p>
+                <div class="mt-auto rounded-3xl bg-white/[0.11] p-3 backdrop-blur-md ring-1 ring-white/12 shadow-[inset_0_1px_0_rgba(255,255,255,0.12)]">
+                    <div class="flex items-center gap-3">
+                        <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-emerald-100 text-sm font-bold text-teal-950">
+                            {{
+                                collect(explode(' ', $user?->name ?? 'U'))
+                                    ->map(fn ($part) => mb_substr($part, 0, 1))
+                                    ->take(2)
+                                    ->implode('')
+                            }}
+                        </span>
+                        <div class="min-w-0">
+                            <p class="truncate text-sm font-semibold text-white">{{ $user?->name }}</p>
+                            <p class="mt-1 text-xs font-medium text-emerald-100/90">{{ $roleLabel }}</p>
+                        </div>
+                    </div>
 
                     <div class="mt-3 flex items-center gap-2">
                         <a href="{{ route('profile.edit') }}"
@@ -110,7 +99,11 @@
 
         @include('layouts.navigation')
 
-        <main class="ml-0 p-6 pt-20 sm:p-8 sm:pt-20 lg:ml-64">
+        <main class="relative ml-0 min-h-screen overflow-hidden bg-[#f8faf9] p-4 pt-20 sm:p-9 sm:pt-28 lg:ml-72 lg:pl-10">
+            <div class="pointer-events-none absolute inset-0">
+                <div class="absolute inset-0 bg-gradient-to-br from-white/92 via-[#f8faf9]/96 to-[#f4f6f5]/96"></div>
+            </div>
+            <div class="relative z-10">
             @isset($header)
                 <div class="mb-6">
                     {{ $header }}
@@ -118,6 +111,7 @@
             @endisset
 
             {{ $slot }}
+            </div>
         </main>
     </div>
 </body>

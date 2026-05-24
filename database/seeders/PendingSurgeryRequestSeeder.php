@@ -21,7 +21,7 @@ class PendingSurgeryRequestSeeder extends Seeder
         $specialist = Specialist::firstOrCreate(['name' => 'Spesialis Bedah Umum']);
 
         $doctorUser = User::firstOrCreate(
-            ['email' => 'dokter.pending@example.com'],
+            ['email' => 'yunaaapril@gmail.com'],
             [
                 'name' => 'Dokter Pending Demo',
                 'password' => Hash::make('password'),

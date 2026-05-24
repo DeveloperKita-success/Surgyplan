@@ -3,6 +3,10 @@
 @tailwind utilities;
 
 @layer utilities {
+	[x-cloak] {
+		display: none !important;
+	}
+
 	/* Auth background: radial gradient (top center) using SurgyPlan palette */
 	.sp-auth-radial-bg {
 		background-color: #0B2B26;
