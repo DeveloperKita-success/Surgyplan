@@ -2,7 +2,7 @@
     $items = [
         ['label' => 'Dashboard', 'icon' => 'dashboard', 'route' => 'doctor.dashboard', 'active' => 'doctor.dashboard'],
         ['label' => 'Jadwal Operasi', 'icon' => 'calendar', 'route' => 'doctor.schedules.index', 'active' => 'doctor.schedules.*'],
-        ['label' => 'Riwayat Operasi', 'icon' => 'report', 'route' => 'doctor.schedules.index', 'active' => 'doctor.reports.*'],
+        // ['label' => 'Riwayat Operasi', 'icon' => 'report', 'route' => 'doctor.schedules.index', 'active' => 'doctor.reports.*'],
     ];
 @endphp
 

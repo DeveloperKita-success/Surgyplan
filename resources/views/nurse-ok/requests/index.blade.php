@@ -33,14 +33,7 @@
                 'action' => 'Lihat',
                 'actionClass' => 'border-rose-200 bg-rose-50 text-rose-700 hover:bg-rose-100',
             ],
-            'ditunda' => [
-                'label' => 'Ditunda',
-                'badge' => 'border-sky-200 bg-sky-50 text-sky-700',
-                'dot' => 'bg-sky-500',
-                'row' => 'border-l-sky-400',
-                'action' => 'Review ulang',
-                'actionClass' => 'border-sky-200 bg-sky-50 text-sky-700 hover:bg-sky-100',
-            ],
+            
         ];
         $priorityMeta = [
             'Imminent' => 'border-rose-200 bg-rose-50 text-rose-700',
@@ -59,12 +52,12 @@
             ['label' => 'Menunggu', 'value' => 'menunggu', 'count' => $statusCounts['menunggu'], 'class' => $statusMeta['menunggu']['badge']],
             ['label' => 'Disetujui', 'value' => 'disetujui', 'count' => $statusCounts['disetujui'], 'class' => $statusMeta['disetujui']['badge']],
             ['label' => 'Ditolak', 'value' => 'ditolak', 'count' => $statusCounts['ditolak'], 'class' => $statusMeta['ditolak']['badge']],
-            ['label' => 'Ditunda', 'value' => 'ditunda', 'count' => $statusCounts['ditunda'], 'class' => $statusMeta['ditunda']['badge']],
+            
         ];
     @endphp
 
     <div class="space-y-6">
-        <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+        <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
             @foreach ($filters as $filter)
                 @php $isActive = $activeStatus === $filter['value']; @endphp
                 <a href="{{ $filter['value'] ? route('nurse-ok.requests.index', ['status' => $filter['value']]) : route('nurse-ok.requests.index') }}"

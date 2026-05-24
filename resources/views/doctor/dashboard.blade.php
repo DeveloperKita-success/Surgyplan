@@ -33,19 +33,11 @@
         <section class="grid gap-4 md:grid-cols-3">
             @foreach ($dashboardStats as $stat)
                 <div class="rounded-[1.75rem] border border-white bg-white p-5 shadow-[0_16px_40px_rgba(15,23,42,0.06)]">
-                    <div class="flex items-start justify-between gap-4">
-                        <span class="flex h-12 w-12 items-center justify-center rounded-2xl bg-teal-50 text-teal-800">
-                            @include('layouts.sidebars.icons', ['name' => $stat['icon']])
-                        </span>
+                    <div class="flex items-start justify-end gap-4">
                         <span class="rounded-full bg-slate-50 px-2.5 py-1 text-[11px] font-bold text-slate-500">Live</span>
                     </div>
                     <p class="mt-5 text-sm font-semibold text-slate-500">{{ $stat['label'] }}</p>
                     <p class="mt-2 text-4xl font-bold tracking-normal text-slate-950">{{ $stat['value'] }}</p>
-                    <div class="mt-4 flex h-7 items-end gap-1.5">
-                        @foreach ([44, 62, 38, 78, 58, 86, 68] as $height)
-                            <span class="w-full rounded-full bg-gradient-to-t from-teal-800 to-emerald-200" style="height: {{ $height }}%"></span>
-                        @endforeach
-                    </div>
                 </div>
             @endforeach
         </section>
