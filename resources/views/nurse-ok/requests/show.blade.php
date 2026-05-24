@@ -283,70 +283,25 @@
                     </div>
 
                     <section class="mt-5 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-                        <div
-                            x-data="{
-                                search: '',
-                                selected: @js($selectedDoctorId),
-                                doctors: @js($doctorOptions),
-                                get filteredDoctors() {
-                                    const keyword = this.search.trim().toLowerCase();
-
-                                    if (!keyword) {
-                                        return this.doctors;
-                                    }
-
-                                    return this.doctors.filter((doctor) => {
-                                        return `${doctor.name} ${doctor.specialist} ${doctor.str_number}`.toLowerCase().includes(keyword);
-                                    });
-                                },
-                            }"
-                            class="mb-5 rounded-xl border border-cyan-100 bg-cyan-50 p-4"
-                        >
-                            <input type="hidden" name="requested_doctor_id" x-model="selected">
+                        <div class="mb-5 rounded-xl border border-cyan-100 bg-cyan-50 p-4">
+                            <input type="hidden" name="requested_doctor_id" value="{{ old('requested_doctor_id', $surgeryRequest->requested_doctor_id) }}">
 
                             <div class="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between">
                                 <div>
-                                    <p class="text-sm font-bold text-cyan-900">Dokter Penanggung Jawab <span class="text-rose-600">*</span></p>
-                                    <p class="text-xs text-cyan-700">Wajib dipilih sebelum verifikasi disimpan. Email pemberitahuan akan dikirim ke dokter ini saat pengajuan disetujui.</p>
+                                    <p class="text-sm font-bold text-cyan-900">Dokter Penanggung Jawab</p>
+                                    <p class="text-xs text-cyan-700">Data berasal dari Perawat Reguler dan tidak dapat diubah di sini.</p>
                                 </div>
                             </div>
 
-                            <div class="mt-3 grid gap-3 lg:grid-cols-[0.85fr_1.15fr]">
-                                <label>
-                                    <span class="text-xs font-bold text-cyan-900">Cari dokter</span>
-                                    <input
-                                        type="search"
-                                        x-model="search"
-                                        placeholder="Nama, spesialis, atau STR"
-                                        class="mt-1 w-full rounded-lg border-cyan-200 text-sm focus:border-cyan-600 focus:ring-cyan-600"
-                                    >
-                                </label>
-
-                                <label>
-                                    <span class="text-xs font-bold text-cyan-900">Pilih dari dropdown</span>
-                                    <select
-                                        x-model="selected"
-                                        class="mt-1 w-full rounded-lg border-cyan-200 text-sm focus:border-cyan-600 focus:ring-cyan-600"
-                                    >
-                                        <option value="">Pilih dokter</option>
-                                        <template x-for="doctor in filteredDoctors" :key="doctor.id">
-                                            <option
-                                                :value="doctor.id"
-                                                x-text="`${doctor.name} - ${doctor.specialist}`"
-                                            ></option>
-                                        </template>
-                                    </select>
-                                </label>
-                            </div>
-
-                            <template x-if="selected">
-                                <div class="mt-3 rounded-lg bg-white px-3 py-2 text-xs font-semibold text-cyan-900">
+                            <div class="mt-3">
+                                <div class="rounded-lg bg-white px-3 py-2 text-xs font-semibold text-cyan-900">
                                     <span>Terpilih: </span>
-                                    <span x-text="doctors.find((doctor) => doctor.id === selected)?.name ?? '-'"></span>
+                                    <span class="font-bold">{{ $surgeryRequest->requestedDoctor?->title }} {{ $surgeryRequest->requestedDoctor?->user?->name ?? '-' }}</span>
                                     <span> - </span>
-                                    <span x-text="doctors.find((doctor) => doctor.id === selected)?.specialist ?? '-'"></span>
+                                    <span>{{ $surgeryRequest->requestedDoctor?->specialist?->name ?? '-' }}</span>
+                                    <div class="mt-1 text-xs text-slate-500">STR: {{ $surgeryRequest->requestedDoctor?->str_number ?? '-' }}</div>
                                 </div>
-                            </template>
+                            </div>
 
                             @error('requested_doctor_id')
                                 <p class="mt-2 text-xs font-semibold text-rose-600">{{ $message }}</p>
