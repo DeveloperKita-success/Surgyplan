@@ -9,7 +9,7 @@
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+        <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700,800&display=swap" rel="stylesheet" />
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -20,22 +20,28 @@
             $isRegister = request()->routeIs('register');
             $isForgotPassword = request()->routeIs('password.request');
             $isResetPassword = request()->routeIs('password.reset');
-            $useSimpleAuthTheme = $isLogin || $isRegister || $isForgotPassword || $isResetPassword;
+            $useModernAuthTheme = $isLogin || $isForgotPassword;
+            $useSimpleAuthTheme = $isRegister || $isResetPassword;
         @endphp
-        <div class="min-h-screen {{ $useSimpleAuthTheme ? 'sp-login-bg' : 'bg-gradient-to-b from-emerald-50 via-white to-white' }}">
-            <div class="mx-auto flex min-h-screen max-w-7xl flex-col items-center justify-center px-6 py-10">
-                <a href="/" class="flex flex-col items-center gap-3">
-                    <x-application-logo class="h-16 w-auto" />
-                    <div class="text-center leading-tight">
-                        <div class="text-base font-semibold text-slate-900">{{ config('app.name', 'SurgyPlan') }}</div>
-                        <div class="text-xs text-slate-600">Sistem Penjadwalan Operasi Pasien</div>
-                    </div>
-                </a>
 
-                <div class="mt-6 {{ $useSimpleAuthTheme ? 'auth-card' : 'w-full sm:max-w-md overflow-hidden rounded-2xl bg-white p-8 shadow-sm ring-1 ring-slate-200' }}">
-                    {{ $slot }}
+        @if ($useModernAuthTheme)
+            {{ $slot }}
+        @else
+            <div class="min-h-screen {{ $useSimpleAuthTheme ? 'sp-login-bg' : 'bg-gradient-to-b from-emerald-50 via-white to-white' }}">
+                <div class="mx-auto flex min-h-screen max-w-7xl flex-col items-center justify-center px-6 py-10">
+                    <a href="/" class="flex flex-col items-center gap-3">
+                        <x-application-logo class="h-16 w-auto" />
+                        <div class="text-center leading-tight">
+                            <div class="text-base font-semibold text-slate-900">{{ config('app.name', 'SurgyPlan') }}</div>
+                            <div class="text-xs text-slate-600">Sistem Penjadwalan Operasi Pasien</div>
+                        </div>
+                    </a>
+
+                    <div class="mt-6 {{ $useSimpleAuthTheme ? 'auth-card' : 'w-full sm:max-w-md overflow-hidden rounded-2xl bg-white p-8 shadow-sm ring-1 ring-slate-200' }}">
+                        {{ $slot }}
+                    </div>
                 </div>
             </div>
-        </div>
+        @endif
     </body>
 </html>
